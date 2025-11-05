@@ -1,0 +1,43 @@
+.header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 10px 20px;
+  background-color: #ffffff7c;
+  box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+  height: 180px;
+}
+
+.logoContainer {
+  display: flex;
+  align-items: center;
+}
+
+.nav {
+  display: flex;
+  gap: 40px;
+  position: absolute;      
+  left: 50%;
+  transform: translateX(-50%);
+}
+
+.link {
+  text-decoration: none;
+  color: #060606;
+  font-weight: 500;
+  font-size: 24px;
+  font-family:'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+}
+
+.link:hover {
+      font-weight: 800;
+
+}
+.userButton {
+    background: none;
+    border: none;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    margin-right: 30px; 
+}
