@@ -1,10 +1,13 @@
-'use client'
+'use client';
 import Image from 'next/image';
 import Link from 'next/link';
 import { useState } from 'react';
 import styles from './Header.module.css';
 import logo from '../../../public/logo.png';
 import user from '../../../public/user.png';
+import menu from '../../../public/menu.png';
+import close from '../../../public/remove.png';
+
 
 export default function Header() {
   const [isOpen, setIsOpen] = useState(false);
@@ -15,7 +18,7 @@ export default function Header() {
     <header className={styles.header}>
       <div className={styles.logoContainer}>
         <Link href="/">
-          <Image src={logo} alt="Project Logo" width={80} height={80} />
+          <Image src={logo} alt="Project Logo" width={210} height={210} />
         </Link>
       </div>
 
@@ -24,7 +27,7 @@ export default function Header() {
         onClick={toggleMenu}
         aria-label="Toggle Menu"
       >
-        {isOpen ? '✕' : '☰'}
+        {isOpen ?  <Image src={close} alt="Close Menu" width={50} height={50} /> : <Image src={menu} alt="Open Menu" width={50} height={50} />}
       </button>
 
       <nav className={`${styles.nav} ${isOpen ? styles.open : ''}`}>
@@ -37,8 +40,10 @@ export default function Header() {
       </nav>
 
       <button className={styles.userButton}>
-        <Image src={user} alt="User Icon" width={40} height={40} />
+        <Image src={user} alt="User Icon" width={50} height={50} />
       </button>
+
+      {isOpen && <div className={styles.overlay} onClick={() => setIsOpen(false)} />}
     </header>
   );
 }
