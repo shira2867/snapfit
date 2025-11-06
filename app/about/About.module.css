@@ -139,12 +139,12 @@
   }
 
   .heroImage {
-    height: auto; /* allow natural height */
+    height: auto; 
   }
 
   .heroImage img {
     width: 100%;
     height: auto !important;
-    object-fit: contain !important; /* ✅ no cropping on mobile */
+    object-fit: contain !important; 
   }
 }
