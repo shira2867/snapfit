@@ -1,5 +1,5 @@
 .header {
-  height: 170px;
+  height: 140px;
   display: flex;
   align-items: center;
   justify-content: space-between;
@@ -24,7 +24,7 @@
   text-decoration: none;
   color: #060606;
   font-weight: 500;
-  font-size: 26px;
+  font-size: 20px;
 font-family: "Arial", sans-serif;
 }
 
