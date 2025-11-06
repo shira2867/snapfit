@@ -25,7 +25,7 @@
   color: #060606;
   font-weight: 500;
   font-size: 26px;
-  font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+font-family: "Arial", sans-serif;
 }
 
 .link:hover {
@@ -50,16 +50,20 @@
   color: #000;
   z-index: 300;
 }
+.rightControls {
+  display: flex;
+  align-items: center;
+  gap: 10px; 
+  z-index: 300;
+  margin-bottom: 15px;
+}
 
 @media (max-width: 1024px) {
   .hamburger {
     display: block;
   }
 
-  .userButton {
-    display: none;
-  }
-
+ 
   .nav {
     flex-direction: column;
     align-items: center;
@@ -86,7 +90,23 @@
     width: 100%;
     text-align: center;
   }
+.nav .link {
+  opacity: 0;
+  transform: translateX(-30px);
+  transition: opacity 0.4s ease, transform 0.4s ease;
+}
 
+.nav.open .link {
+  opacity: 1;
+  transform: translateX(0);
+}
+
+.nav.open .link:nth-child(1) { transition-delay: 0.1s; }
+.nav.open .link:nth-child(2) { transition-delay: 0.4s; }
+.nav.open .link:nth-child(3) { transition-delay: 0.7s; }
+.nav.open .link:nth-child(4) { transition-delay: 1s; }
+.nav.open .link:nth-child(5) { transition-delay: 1.3s; }
+.nav.open .link:nth-child(6) { transition-delay: 1.6s; }
   .overlay {
     position: fixed;
     top: 0;
