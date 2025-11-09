@@ -5,11 +5,12 @@ import { useForm } from "react-hook-form";
 import { initializeApp } from "firebase/app";
 import { getAuth, signInWithPopup, GoogleAuthProvider, createUserWithEmailAndPassword, signOut, User } from "firebase/auth";
 
+import styles from "./SignupForm.module.css";
 const firebaseConfig = {
   apiKey: "AIzaSyDiO9v_BzyyJ8C0W_M_pNvGFHGOH0rcn0E",
   authDomain: "modella-19e1a.firebaseapp.com",
   projectId: "modella-19e1a",
-  storageBucket: "modella-19e1a.firebasestorage.app",
+  storageBucket: "modella-19e1a.appspot.com",
   messagingSenderId: "950370790683",
   appId: "1:950370790683:web:c4b6c74355ac2bd7e077be"
 };
@@ -35,14 +36,14 @@ export default function AuthForm() {
         setUser(user);
 
         // שמירה במסד MongoDB
-        await fetch("/api/users", {
+        await fetch("/api/register", {
           method: "POST",
           headers: { "Content-Type": "application/json" },
           body: JSON.stringify({
             name: user.displayName,
             email: user.email,
             profileImage: user.photoURL,
-            gender: "female", // אפשר לשנות בהתאם
+            gender: "female",
           }),
         });
 
@@ -59,7 +60,7 @@ export default function AuthForm() {
       setUser(user);
 
       // שמירה במסד MongoDB
-      await fetch("/api/users", {
+      await fetch("/api/register", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
@@ -78,32 +79,28 @@ export default function AuthForm() {
     signOut(auth).then(() => setUser(null)).catch(console.error);
   }
 
-  return (
-    <div className="flex flex-col items-center justify-center min-h-screen bg-zinc-50 dark:bg-black font-sans gap-4">
-      {/* טופס רגיל */}
-      <form onSubmit={handleSubmit(onSubmit)} className="flex flex-col gap-2 bg-white p-6 rounded shadow-md dark:bg-zinc-800">
-        <input {...register("email")} placeholder="Email" className="p-2 border rounded" />
-        <input {...register("password")} type="password" placeholder="Password" className="p-2 border rounded" />
-        <button type="submit" className="bg-blue-500 text-white p-2 rounded mt-2">Register / Login</button>
-      </form>
-
-      {/* כניסה עם גוגל */}
-      <button onClick={signInWithGoogle} className="rounded-full bg-white px-6 py-3 shadow-md hover:shadow-lg active:scale-95 dark:bg-zinc-800">
+    return (
+    <div className={styles.container}>
+      <form onSubmit={handleSubmit(onSubmit)} className={styles.form}>
+        <input {...register("email")} placeholder="Email" className={styles.input} />
+        <input {...register("password")} type="password" placeholder="Password" className={styles.input} />
+        <button type="submit" className={styles.button}>Create Account</button>
+          <button onClick={signInWithGoogle} className={styles.googleButton}>
         Sign in with Google
       </button>
+      </form>
 
-      {/* התנתקות */}
+    
+
       {user && (
         <>
-          <button onClick={signOutUser} className="rounded-full bg-white px-6 py-3 shadow-md dark:bg-zinc-800">
+          {/* <button onClick={signOutUser} className={styles.googleButton}>
             Sign Out
-          </button>
+          </button> */}
 
-          <div className="mt-4 text-center">
-            <h2 className="text-xl font-semibold text-zinc-800 dark:text-zinc-200">
-              Welcome, {user.displayName || user.email}
-            </h2>
-            {user.photoURL && <Image src={user.photoURL} alt="Profile Picture" width={100} height={100} className="rounded-full mt-2" />}
+          <div className={styles.userInfo}>
+            <h2>Welcome, {user.displayName || user.email}</h2>
+            {user.photoURL && <Image src={user.photoURL} alt="Profile Picture" width={100} height={100} className={styles.profileImage} />}
           </div>
         </>
       )}
