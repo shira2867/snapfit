@@ -41,9 +41,7 @@
   transition: background 0.2s ease;
 }
 
-.googleButton:hover {
-  background-color: #f3f3f3;
-}
+
 
 .orDivider {
   text-align: center;

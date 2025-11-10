@@ -59,7 +59,6 @@ export default function AuthForm() {
       console.error(error);
     }
   }
-
   async function onSubmit(data: FormData) {
     try {
       const userCredential = await createUserWithEmailAndPassword(
@@ -81,10 +80,42 @@ export default function AuthForm() {
       });
 
       router.push("/complete-profile");
-    } catch (error) {
-      console.error(error);
+    } catch (error: any) {
+      // Firebase משתמש בקודים ספציפיים לטעויות
+      if (error.code === "auth/email-already-in-use") {
+        alert("The email is already registered. Please log in instead.");
+      } else {
+        console.error(error);
+        alert(error.message || "Error creating account");
+      }
     }
   }
+
+  // async function onSubmit(data: FormData) {
+  //   try {
+  //     const userCredential = await createUserWithEmailAndPassword(
+  //       auth,
+  //       data.email,
+  //       data.password
+  //     );
+  //     const user = userCredential.user;
+  //     setUser(user);
+
+  //     await fetch("/api/user/register", {
+  //       method: "POST",
+  //       headers: { "Content-Type": "application/json" },
+  //       body: JSON.stringify({
+  //         email: user.email,
+  //         password: data.password,
+  //         createdAt: new Date(),
+  //       }),
+  //     });
+
+  //     router.push("/complete-profile");
+  //   } catch (error) {
+  //     console.error(error);
+  //   }
+  // }
 
   function signOutUser() {
     signOut(auth)
@@ -103,7 +134,8 @@ export default function AuthForm() {
             onClick={signInWithGoogle}
             className={styles.googleButton}
           >
-            <Image src="/google.svg" alt="Google" width={18} height={18} />
+
+            <Image src="/google.png" alt="Google" width={18} height={18} />
             Continue with Google
           </button>
 
@@ -152,7 +184,7 @@ export default function AuthForm() {
               className={styles.profileImage}
             />
           )}
-          
+
         </div>
       )}
     </div>
