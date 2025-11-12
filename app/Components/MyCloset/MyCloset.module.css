@@ -1,0 +1,176 @@
+
+.container {
+  display: flex;
+  flex-direction: column;
+  min-height: 100vh;
+}
+
+.mainContent {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 20px;
+}
+.title {
+  font-size: 2rem;
+  font-weight: bold;
+  margin: 20px 0;
+}
+.categoriesWrapper {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  flex-wrap: wrap;
+  margin-bottom: 20px;
+}
+
+.categoryButton {
+  background: none;
+  border: none;
+  cursor: pointer;
+  font-size: 1rem;
+  padding: 5px 10px;
+}
+
+.categoryButton.active {
+  font-weight: bold;
+  text-decoration: underline;
+}
+
+.openFilterButton {
+  margin-right: auto;
+  padding: 5px 10px;
+  cursor: pointer;
+}
+
+.closetContent {
+  display: flex;
+  gap: 20px;
+  /* justify-content: flex-start; */
+    justify-content: space-between; /* מרחיק את הסיידבר והכרטיסיות */
+
+}
+
+/* סרגל פילטר בצד */
+.filterSidebar {
+  width: 150px;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  text-align: right;
+    order: 2; /* מוודא שהוא בצד ימין */
+}
+
+.filterSection > button {
+  width: 100%;
+  padding: 5px;
+  text-align: right;
+  cursor: pointer;
+  background: #eee;
+  border: none;
+  font-weight: bold;
+}
+
+.optionList,
+.colorOptions {
+  display: flex;
+  flex-direction: column;
+  gap: 5px;
+  margin-top: 5px;
+  flex-wrap: wrap; /* מאפשר לעגלים להתגלגל לשורה הבאה */
+  gap: 10px; /* רווח בין הצבעים */
+    flex-direction: row; /* חשוב! כדי שהעגלים יהיו בשורה ולא בעמודה */
+
+}
+
+.optionButton {
+  padding: 3px 5px;
+  border: none;
+  background: #ddd;
+  cursor: pointer;
+}
+
+.optionButton.active {
+  background: #aaa;
+}
+
+.colorCircle {
+  width: 25px;
+  height: 25px;
+  border-radius: 50%;
+  cursor: pointer;
+  border: 1px solid #999;
+    flex: 0 0 30px; /* כל עיגול תופס 30px */
+
+}
+
+.colorCircle.activeColor {
+  border: 2px solid #000;
+}
+
+/* כרטיסיות תמונות */
+.cardsWrapper {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(180px, 1fr));
+  gap: 15px;
+  flex: 1;
+  
+}
+
+.card {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+.card img {
+  width: 100%;
+  object-fit: cover;
+  border-radius: 8px;
+}
+
+.colorPreview {
+  width: 25px;
+  height: 25px;
+  border-radius: 50%;
+  margin-top: 5px;
+}
+.loading {
+  font-size: 1.2rem;
+  margin: 50px 0;
+}
+
+.noClothes {
+  font-size: 1rem;
+  color: #777;
+  text-align: center;
+  width: 100%;
+  grid-column: 1 / -1;
+}
+.cardsWrapper {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+  gap: 20px;
+  width: 100%;
+  max-width: 1200px;
+}
+
+.card {
+  background-color: #fff;
+  border-radius: 12px;
+  box-shadow: 0 6px 18px rgba(0, 0, 0, 0.15);
+  overflow: hidden;
+  transition: transform 0.3s ease, box-shadow 0.3s ease;
+}
+
+.card:hover {
+  transform: translateY(-5px);
+  box-shadow: 0 10px 25px rgba(0, 0, 0, 0.2);
+}
+
+.clothImage {
+  width: 100%;
+  height: 280px;
+  object-fit: cover;
+}

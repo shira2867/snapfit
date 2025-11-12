@@ -15,21 +15,30 @@ export async function POST(req: Request) {
     }
 
     const col = await usersCollection();
+    const now = new Date();
 
-    // check if exists
-    const exists = await col.findOne({ email });
-    if (exists) {
-      return NextResponse.json(
-        { error: "Email already registered" },
-        { status: 409 }
+    const existingUser = await col.findOne({ email });
+
+    if (existingUser) {
+      // עדכון משתמש קיים
+      await col.updateOne(
+        { email },
+        {
+          $set: {
+            name: name || existingUser.name,
+            gender: gender || existingUser.gender,
+            profileImage: profileImage || existingUser.profileImage,
+            updatedAt: now,
+          },
+        }
       );
+
+      return NextResponse.json({ ok: true, exists: true, message: "User updated" });
     }
 
-    // hash password only if it exists
+    // יצירת משתמש חדש
     const passwordHash = password ? await bcrypt.hash(password, 10) : null;
 
-    // insert user
-    const now = new Date();
     await col.insertOne({
       name: name || null,
       email,
@@ -40,11 +49,11 @@ export async function POST(req: Request) {
       updatedAt: now,
     });
 
-    return NextResponse.json({ ok: true });
+    return NextResponse.json({ ok: true, exists: false, message: "User created" });
   } catch (err) {
     console.error(err);
     return NextResponse.json(
-      { error: "Server error" },
+      { error: "Server error", ok: false },
       { status: 500 }
     );
   }

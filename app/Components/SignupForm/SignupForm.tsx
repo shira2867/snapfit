@@ -4,6 +4,9 @@ import React, { useState } from "react";
 import { useForm } from "react-hook-form";
 import { useRouter } from "next/navigation";
 import { initializeApp } from "firebase/app";
+import logo from '../../../public/logo.png';
+import Link from 'next/link';
+
 import {
   getAuth,
   signInWithPopup,
@@ -12,6 +15,7 @@ import {
   signOut,
   User,
 } from "firebase/auth";
+import { useUserStore } from "@/store/userStore";
 
 import styles from "./SignupForm.module.css";
 
@@ -37,28 +41,49 @@ export default function AuthForm() {
   const [user, setUser] = useState<User | null>(null);
   const { register, handleSubmit } = useForm<FormData>();
   const router = useRouter();
+  const setUserStore = useUserStore((state) => state.setUser);
+  const currentUser = useUserStore((state) => state.user);
+
+  React.useEffect(() => {
+    console.log("Current user in store:", currentUser);
+  }, [currentUser]);
 
   async function signInWithGoogle() {
     try {
       const result = await signInWithPopup(auth, provider);
-      const user = result.user;
-      setUser(user);
+      const firebaseUser = result.user;
+      setUser(firebaseUser);
 
-      await fetch("/api/user/register", {
+      const res = await fetch("/api/user/register", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
-          name: user.displayName,
-          email: user.email,
-          profileImage: user.photoURL,
+          name: firebaseUser.displayName,
+          email: firebaseUser.email,
+          profileImage: firebaseUser.photoURL,
         }),
       });
 
-      router.push("/complete-profile");
+      const data = await res.json();
+
+      setUserStore({
+        name: firebaseUser.displayName || null,
+        email: firebaseUser.email || null,
+        profileImage: firebaseUser.photoURL || null,
+        gender: null,
+      });
+
+      if (data.message === "User updated") {
+        alert("Email already registered. Redirecting to login.");
+        router.push("/login"); 
+      } else {
+        router.push("/complete-profile");
+      }
     } catch (error) {
       console.error(error);
     }
   }
+
   async function onSubmit(data: FormData) {
     try {
       const userCredential = await createUserWithEmailAndPassword(
@@ -66,22 +91,35 @@ export default function AuthForm() {
         data.email,
         data.password
       );
-      const user = userCredential.user;
-      setUser(user);
+      const firebaseUser = userCredential.user;
+      setUser(firebaseUser);
 
-      await fetch("/api/user/register", {
+      const res = await fetch("/api/user/register", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
-          email: user.email,
+          email: firebaseUser.email,
           password: data.password,
           createdAt: new Date(),
         }),
       });
 
-      router.push("/complete-profile");
+      const resData = await res.json();
+
+      setUserStore({
+        name: "",
+        email: firebaseUser.email || null,
+        profileImage: "",
+        gender: null,
+      });
+
+      if (resData.message === "User updated") {
+        alert("Email already registered. Redirecting to login.");
+        router.push("/login");
+      } else {
+        router.push("/complete-profile");
+      }
     } catch (error: any) {
-      // Firebase משתמש בקודים ספציפיים לטעויות
       if (error.code === "auth/email-already-in-use") {
         alert("The email is already registered. Please log in instead.");
       } else {
@@ -91,40 +129,22 @@ export default function AuthForm() {
     }
   }
 
-  // async function onSubmit(data: FormData) {
-  //   try {
-  //     const userCredential = await createUserWithEmailAndPassword(
-  //       auth,
-  //       data.email,
-  //       data.password
-  //     );
-  //     const user = userCredential.user;
-  //     setUser(user);
-
-  //     await fetch("/api/user/register", {
-  //       method: "POST",
-  //       headers: { "Content-Type": "application/json" },
-  //       body: JSON.stringify({
-  //         email: user.email,
-  //         password: data.password,
-  //         createdAt: new Date(),
-  //       }),
-  //     });
-
-  //     router.push("/complete-profile");
-  //   } catch (error) {
-  //     console.error(error);
-  //   }
-  // }
-
   function signOutUser() {
     signOut(auth)
-      .then(() => setUser(null))
+      .then(() => {
+        setUser(null);
+        useUserStore.getState().clearUser();
+      })
       .catch(console.error);
   }
-
   return (
-    <div className={styles.container}>
+    <div className={styles.signupPage}>
+             <div className={styles.localHeader}>
+          <Link href="/">
+            <Image src={logo} alt="Project Logo" width={210} height={210} />
+          </Link>
+        </div>
+  <div className={styles.container}>
       {!user ? (
         <form onSubmit={handleSubmit(onSubmit)} className={styles.form}>
           <h2>Create Your Account</h2>
@@ -134,7 +154,6 @@ export default function AuthForm() {
             onClick={signInWithGoogle}
             className={styles.googleButton}
           >
-
             <Image src="/google.png" alt="Google" width={18} height={18} />
             Continue with Google
           </button>
@@ -169,7 +188,7 @@ export default function AuthForm() {
           </p>
 
           <p className={styles.loginLink}>
-            Already have an account? <a href="#">Log in here</a>
+            Already have an account? <a href="/login">Log in here</a>
           </p>
         </form>
       ) : (
@@ -184,9 +203,9 @@ export default function AuthForm() {
               className={styles.profileImage}
             />
           )}
-
         </div>
       )}
+      </div>
     </div>
   );
 }
