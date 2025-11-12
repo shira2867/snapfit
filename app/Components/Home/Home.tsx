@@ -136,22 +136,6 @@ export default function HomePage() {
           choosing what to wear – your perfect style is just a click away.
         </p>
       </section>
-      {/* <div className={styles.videosWrapper}>
-        <h2 className={styles.title}>Daily Outfit Inspo ✨</h2>
-        <div className={styles.videosRow}>
-          {videos.map((video, index) => (
-            <video
-              key={index}
-              src={video}
-              muted
-              loop
-              className={styles.videoItem}
-              onMouseEnter={(e) => e.currentTarget.play()}
-              onMouseLeave={(e) => e.currentTarget.pause()}
-            />
-          ))}
-        </div>
-      </div> */}
       <div className={styles.videosWrapper}>
         <h2 className={styles.title}>Daily Outfit Inspo ✨</h2>
         <div className={styles.videosRow}>
