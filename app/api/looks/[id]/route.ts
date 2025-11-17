@@ -3,16 +3,17 @@ import { looksCollection } from "@/services/server/looks";
 
 // GET /api/looks/12345
 type RouteContext = {
-  params: {
+  params: Promise<{
     id: string;
-  };
+  }>;
 };
 
 export async function GET(
   req: NextRequest,
   context: RouteContext
 ) {
-  const { id } = context.params;
+  // לפי הטייפ של Next 16 – params הוא Promise
+  const { id } = await context.params;
 
   try {
     const col = await looksCollection();
