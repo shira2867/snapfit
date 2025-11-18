@@ -113,6 +113,10 @@ const MyLooks: React.FC<MyLooksProps> = ({ userId }) => {
     const colorMatch = !colorFilter || itemColors.includes(colorFilter.toLowerCase());
     const seasonMatch =
       !seasonFilter || look.items.some((i) => isItemInSeason(i, seasonFilter));
+<<<<<<< HEAD
+=======
+    console.log("Filtering look", "lookID", look._id, { styleMatch, colorMatch, seasonMatch });
+>>>>>>> dd6eda212352b3705643ec06279cc53fbc6236f2
     return styleMatch && colorMatch && seasonMatch;
   });
 
@@ -156,18 +160,19 @@ const MyLooks: React.FC<MyLooksProps> = ({ userId }) => {
           ))}
         </div>
 
-       <h3 className={styles.filterTitle}>Season</h3>
-<div className={styles.seasonFilterWrapper}>
-  {seasons.map((s) => (
-    <button
-      key={s}
-      className={`${styles.filterButton} ${seasonFilter === s ? styles.active : ""}`}
-      onClick={() => setSeasonFilter(seasonFilter === s ? null : s)}
-    >
-      {s}
-    </button>
-  ))}
-</div>
+        <h3 className={styles.filterTitle}>Season</h3>
+        <div className={styles.seasonFilterWrapper}>
+          {seasons.map((s) => (
+            <button
+              key={s}
+              className={`${styles.filterButton} ${seasonFilter === s ? styles.active : ""}`}
+              onClick={() => setSeasonFilter(seasonFilter === s ? null : s)}
+            >
+              {s}
+            </button>
+          ))}
+        </div>
+
       </div>
       {loading ? (
         <p>Loading...</p>
@@ -176,7 +181,7 @@ const MyLooks: React.FC<MyLooksProps> = ({ userId }) => {
       ) : (
         <div className={styles.cardsWrapper}>
           {filteredLooks.map((look) => (
-            <LookCard key={look._id} items={look.items} />
+            <LookCard key={look._id} items={look.items} lookId={look._id} />
           ))}
         </div>
       )}
