@@ -1,6 +1,6 @@
 "use client";
 import { useAuthState } from "react-firebase-hooks/auth";
-import { auth } from "../firebase/config"; // הקובץ שמכיל את ההגדרה של firebase
+import { auth } from "../firebase/config"; 
 import CompleteProfile from "../Components/CompleteProfile/CompleteProfile";
 
 export default function CompleteProfilePage() {

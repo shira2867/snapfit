@@ -20,7 +20,6 @@ export async function POST(req: Request) {
     const existingUser = await col.findOne({ email });
 
     if (existingUser) {
-      // עדכון משתמש קיים
       await col.updateOne(
         { email },
         {
@@ -36,7 +35,6 @@ export async function POST(req: Request) {
       return NextResponse.json({ ok: true, exists: true, message: "User updated" });
     }
 
-    // יצירת משתמש חדש
     const passwordHash = password ? await bcrypt.hash(password, 10) : null;
 
     await col.insertOne({

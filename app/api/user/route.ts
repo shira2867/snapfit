@@ -1,4 +1,3 @@
-// /app/api/user/route.ts (Next.js 13+ app router)
 import { NextResponse } from "next/server";
 import { usersCollection } from "@/services/server/users";
 

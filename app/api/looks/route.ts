@@ -1,7 +1,7 @@
-// /app/api/looks/route.ts
 import { NextRequest, NextResponse } from "next/server";
 import { looksCollection, } from "../../../services/server/looks";
 import {LookType} from "@/types/lookTypes";
+
 
 
 
@@ -57,4 +57,3 @@ export async function GET(req: Request) {
     );
   }
 }
-

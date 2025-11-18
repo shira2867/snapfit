@@ -16,20 +16,17 @@
   overflow: visible;
 }
 
-/* עמודת הלוק (צד שמאל) */
 .mainArea > :first-child {
  flex: 0 0 22%;
   position: sticky;
   align-self: flex-start;
 }
 
-/* אזור הגריד של הבגדים */
 .mainArea > :last-child {
   flex: 1;
   min-width: 300px;
 }
 
-/* מסכים קטנים */
 @media (max-width: 1024px) {
   .mainArea {
     flex-direction: column;
@@ -37,7 +34,7 @@
   }
 
   .mainArea > :first-child {
-    position: static;    /* מבטל sticky במסכים קטנים */
+    position: static;    
     width: 100%;
     max-height: none;
     margin-bottom: 20px;

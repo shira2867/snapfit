@@ -116,7 +116,6 @@ const MyLooks: React.FC<MyLooksProps> = ({ userId }) => {
         Filters
       </button>
 
-      {/* Sidebar */}
       <div className={`${styles.sidebar} ${sidebarOpen ? styles.sidebarOpen : ""}`}>
         <button className={styles.closeSidebar} onClick={() => setSidebarOpen(false)}>
           ×
@@ -160,7 +159,6 @@ const MyLooks: React.FC<MyLooksProps> = ({ userId }) => {
         </div>
 
       </div>
-
       {loading ? (
         <p>Loading...</p>
       ) : filteredLooks.length === 0 ? (

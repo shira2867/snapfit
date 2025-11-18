@@ -8,7 +8,7 @@ import all from "../../../public/summer_11907165.png";
 import coat from "../../../public/clothes_15930120.png";
 import shirt from "../../../public/crop-top_10339535.png";
 import Accessories from "../../../public/accessories_5029392.png";
-import DeleteHandleLooksModal from "../DeleteHandleLooksModal/DeleteHandleLooksModal"; // נתיב לפי המיקום שלך
+import DeleteHandleLooksModal from "../DeleteHandleLooksModal/DeleteHandleLooksModal"; 
 import pants from "../../../public/short_13387117.png";
 import filter from "../../../public/filter_7420963.png";
 import{ClothingItem}from"@/types/clothTypes";
@@ -39,7 +39,6 @@ const COLOR_MAP: Record<string, [number, number, number]> = {
   Beige: [245, 245, 220],
 };
 
-// UPDATED: icon-based categories
 const CATEGORIES = [
   {
     key: "All",
@@ -124,7 +123,6 @@ const MyCloset: React.FC<MyClosetProps> = ({ userId }) => {
     }
     return true;
   });
-
   return (
     <div className={styles.container}>
       <div className={styles.mainContent}>
@@ -144,7 +142,6 @@ const MyCloset: React.FC<MyClosetProps> = ({ userId }) => {
               </button>
             ))}
           </div>
-
           {!showFilters && (
             <button
               className={styles.filterToggle}
@@ -167,8 +164,6 @@ const MyCloset: React.FC<MyClosetProps> = ({ userId }) => {
           >
             <Image src={close} alt="Close Menu" width={30} height={30} />
           </button>
-
-          {/* Categories in mobile */}
           <div className={styles.categoryRowMobile}>
             {CATEGORIES.map((cat) => (
               <button
@@ -185,7 +180,6 @@ const MyCloset: React.FC<MyClosetProps> = ({ userId }) => {
               </button>
             ))}
           </div>
-
           <div className={styles.filterGroup}>
             <label>Color:</label>
             <div className={styles.colorOptions}>
@@ -205,7 +199,6 @@ const MyCloset: React.FC<MyClosetProps> = ({ userId }) => {
               ))}
             </div>
           </div>
-
           <div className={styles.filterGroup}>
             <label>Style:</label>
             <div className={styles.optionList}>
@@ -224,7 +217,6 @@ const MyCloset: React.FC<MyClosetProps> = ({ userId }) => {
               ))}
             </div>
           </div>
-
           <div className={styles.filterGroup}>
             <label>Season:</label>
             <div className={styles.optionList}>
@@ -244,8 +236,6 @@ const MyCloset: React.FC<MyClosetProps> = ({ userId }) => {
             </div>
           </div>
         </div>
-
-        {/* Closet content */}
         <div className={styles.closetContent}>
           {loading ? (
             <p className={styles.loading}>Loading...</p>
@@ -269,7 +259,7 @@ const MyCloset: React.FC<MyClosetProps> = ({ userId }) => {
                       }}
                     />
                   </div>
-                 
+
                   <button
                     onClick={() => {
                       setSelectedClothing(item._id);
@@ -285,7 +275,7 @@ const MyCloset: React.FC<MyClosetProps> = ({ userId }) => {
           )}
         </div>
       </div>
-   
+
       {selectedClothing && (
         <DeleteHandleLooksModal
           clothingId={selectedClothing}
@@ -295,7 +285,7 @@ const MyCloset: React.FC<MyClosetProps> = ({ userId }) => {
             setSelectedClothing(null);
           }}
           onComplete={({ updated, deleted }) => {
-           
+
             setClothes((prev) =>
               prev.filter((c) => c._id !== selectedClothing)
             );

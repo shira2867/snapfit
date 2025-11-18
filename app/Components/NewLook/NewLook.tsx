@@ -3,7 +3,7 @@ import Image from 'next/image';
 import React, { useState, useEffect } from "react";
 import styles from "./NewLook.module.css";
 import down from '../../../public/down.png';
-import { useUserStore } from "../../../store/userStore"; // אם את רוצה משם
+import { useUserStore } from "../../../store/userStore"; 
 
 import { ClothingItem } from "@/types/clothTypes";
 import { LookType } from "@/types/lookTypes";

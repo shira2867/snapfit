@@ -1,4 +1,3 @@
-// services/server/users.ts
 import { getDb } from "./db";
 
 export async function usersCollection() {

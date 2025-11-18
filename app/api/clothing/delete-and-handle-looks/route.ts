@@ -2,18 +2,7 @@ import { NextResponse } from "next/server";
 import { deleteClothing } from "@/services/server/clothing";
 import { looksCollection } from "@/services/server/looks";
 
-/**
- * ציפייה לגוף POST:
- * {
- *   clothingId: string,
- *   actionPerLook: { lookId: string, action: "update" | "delete" }[]
- * }
- *
- * "update" -> להסיר את הפריט מ־items של אותו לוק (לא למחוק את הלוק)
- * "delete" -> למחוק את הלוק כולו
- *
- * בסוף הקוד מוחקים את הפריט מהמנגו (deleteClothing).
- */
+
 
 export async function POST(req: Request) {
   try {
@@ -39,7 +28,6 @@ export async function POST(req: Request) {
       notFoundLooks: [] as string[],
     };
 
-    // עיבוד לפי מה שנבחר עבור כל לוק
     for (const entry of actionPerLook) {
       const { lookId, action } = entry;
       if (!lookId) continue;
@@ -51,20 +39,17 @@ export async function POST(req: Request) {
       }
 
       if (action === "update") {
-        // הסרת הפריט מרשימת הפריטים של הלוק
         await looksCol.updateOne(
           { _id: lookId },
           { $pull: { items: { _id: clothingId } } }
         );
         results.updatedLooks.push(lookId);
       } else if (action === "delete") {
-        // מחיקת הלוק כולו
         await looksCol.deleteOne({ _id: lookId });
         results.deletedLooks.push(lookId);
       }
     }
 
-    // לבסוף - מוחקים את הפריט מהמנגו
     await deleteClothing(clothingId);
 
     return NextResponse.json({
@@ -79,4 +64,32 @@ export async function POST(req: Request) {
       { status: 500 }
     );
   }
+}
+
+export async function GET(req: Request) {
+  const url = new URL(req.url);
+  const clothingId = url.searchParams.get("id");
+
+  if (!clothingId) {
+    return NextResponse.json({ error: "Missing clothingId" }, { status: 400 });
+  }
+
+  const col = await looksCollection();
+
+  const relatedLooks = await col
+    .find({ "items._id": clothingId })
+    .toArray();
+
+  const looks = relatedLooks.map((look) => ({
+    _id: look._id.toString(),
+    items: look.items.map((item: any) => ({
+      _id: item._id,
+      imageUrl: item.imageUrl,
+      category: item.category,
+      colorName: item.colorName,
+      style: item.style,
+    })),
+  }));
+
+  return NextResponse.json({ looks });
 }
