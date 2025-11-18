@@ -1,4 +1,3 @@
-// app/home/page.tsx
 "use client";
 import MyCloset from "@/app/Components/MyCloset/MyCloset";
 import NewLook from "@/app/Components/NewLook/NewLook";

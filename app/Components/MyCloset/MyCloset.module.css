@@ -1,6 +1,3 @@
-
-
-
 .container {
   display: flex;
   flex-direction: column;
@@ -21,7 +18,6 @@
   font-weight: 700;
   color: #333;
   font-family: "Playfair Display", serif;
-
 }
 
 .filterToggle {
@@ -39,7 +35,6 @@
   margin-top: -62px;
 }
 
-/* Filter Panel */
 .filterPanel {
   max-height: 0;
   overflow: hidden;
@@ -99,7 +94,6 @@
   font-weight: 700;
 }
 
-/* Other Button Styles */
 .categoryButtons,
 .optionList,
 .colorOptions {
@@ -122,7 +116,6 @@
   font-weight: 700;
 }
 
-/* Color Circles */
 .colorCircle {
   width: 28px;
   height: 28px;
@@ -140,7 +133,6 @@
   border: 2px solid #222;
 }
 
-/* Cards Grid */
 .cardsWrapper {
   display: grid;
   grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
@@ -188,7 +180,6 @@
   color: #666;
 }
 
-/* Sidebar Filter */
 .sidebarFilter {
   position: fixed;
   top: 50%;
@@ -224,7 +215,6 @@
   text-align: center;
 }
 
-/* Mobile Category Row */
 .categoryRowMobile {
   display: none;
   flex-direction: column;
@@ -234,7 +224,6 @@
   margin-bottom: 1rem;
 }
 
-/* Media Queries */
 @media (max-width: 768px) {
   .categoryRow {
     display: none;
@@ -277,8 +266,7 @@
     height: 300px;
   }
 }
-/*------*/
-/* Modal overlay – מסך שחור שקוף מאחורי החלון */
+
 .modalOverlay {
   position: fixed;
   top: 0;
@@ -292,7 +280,6 @@
   z-index: 1000;
 }
 
-/* Modal content – החלון עצמו */
 .modalContent {
   background-color: #fff;
   padding: 2rem;
@@ -304,14 +291,12 @@
   animation: fadeIn 0.3s ease-out;
 }
 
-/* כותרת */
 .modalContent h2 {
   margin-bottom: 1rem;
   font-size: 1.5rem;
   color: #333;
 }
 
-/* רשימת הלוקים הקשורים */
 .modalContent ul {
   list-style-type: disc;
   margin: 0.5rem 0 1rem 1.5rem;
@@ -320,7 +305,6 @@
   overflow-y: auto;
 }
 
-/* כפתורי הפעולה במודאל */
 .modalActions {
   display: flex;
   justify-content: center;
@@ -328,7 +312,6 @@
   margin-top: 1rem;
 }
 
-/* כפתור אישור מחיקה – אדום בולט */
 .confirmButton {
   background-color: #5c1a1a33;
   color: #fff;
@@ -343,7 +326,6 @@
   background-color: #5c1a1a33;
 }
 
-/* כפתור ביטול – לבן עם מסגרת עדינה */
 .cancelButton {
   background-color: #fff;
   color: #333;
@@ -359,7 +341,6 @@
   border-color: #999;
 }
 
-/* כפתור Delete בתוך הכרטיס */
 .deleteButton {
   margin-top: 0.5rem;
   background-color: #000;
@@ -375,7 +356,6 @@
   background-color: #5c1a1a;
 }
 
-/* אנימציה עדינה לכניסת המודאל */
 @keyframes fadeIn {
   from {
     opacity: 0;
@@ -387,4 +367,3 @@
   }
 }
 
-/*------*/

@@ -1,4 +1,3 @@
-// services/server/users.ts
 import { getDb } from "./db";
 
 export async function usersCollection() {
@@ -6,7 +5,6 @@ export async function usersCollection() {
   return db.collection("users");
 }
 
-// Type for convenience
 export type UserType = {
   _id?: any;
   name?: string;

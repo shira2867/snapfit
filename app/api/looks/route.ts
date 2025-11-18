@@ -1,21 +1,5 @@
-// /app/api/looks/route.ts
 import { NextRequest, NextResponse } from "next/server";
-import { looksCollection, LookType, LookItem } from "../../../services/server/looks";
-
-type MyLookSummary = {
-  _id: string;
-  imageUrl: string;
-  style: string;
-  colorName: string;
-};
-
-type DbLook = {
-  _id: string;
-  items?: LookItem[];
-  imageUrl?: string;
-  createdAt?: Date;
-};
-
+import { looksCollection, LookType } from "../../../services/server/looks";
 
 export async function POST(req: NextRequest) {
   try {
@@ -69,4 +53,3 @@ export async function GET(req: Request) {
     );
   }
 }
-

@@ -1,10 +1,9 @@
-// services/server/clothing.ts
 import { getDb } from "./db";
 import { ObjectId } from "mongodb";
 
 export async function addClothingItem(item: any) {
   const db = await getDb();
-  const collection = db.collection("clothes"); // שם הקולקשן במונגו
+  const collection = db.collection("clothes"); 
 
   const result = await collection.insertOne(item);
   return result;

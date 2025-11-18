@@ -31,7 +31,6 @@
   object-fit: cover; 
 }
 
-/* Share Buttons */
 .shareButtons {
   display: flex;
   gap: 8px;

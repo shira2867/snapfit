@@ -1,4 +1,3 @@
-// lib/colorUtils.ts
 export function getDominantColorFromCenter(image: HTMLImageElement) {
   const canvas = document.createElement("canvas");
   const ctx = canvas.getContext("2d");

@@ -41,9 +41,6 @@ export default function LoginForm() {
 
   const [errorMessage, setErrorMessage] = useState("");
 
-  // --------------------------
-  // GOOGLE LOGIN
-  // --------------------------
   async function loginWithGoogle() {
     try {
       const result = await signInWithPopup(auth, provider);
@@ -59,7 +56,7 @@ export default function LoginForm() {
       }
 
       if (data.user?.id) {
-        setUserId(data.user.id);       // <-- במקום localStorage
+        setUserId(data.user.id); 
       }
 
       setUser({
@@ -76,9 +73,6 @@ export default function LoginForm() {
     }
   }
 
-  // --------------------------
-  // EMAIL + PASSWORD LOGIN
-  // --------------------------
   async function onSubmit(data: FormData) {
     try {
       const res = await fetch(`/api/user?email=${data.email}`);
@@ -98,7 +92,7 @@ export default function LoginForm() {
       const firebaseUser = userCredential.user;
 
       if (dbData.user?.id) {
-        setUserId(dbData.user.id);     // <-- Zustand
+        setUserId(dbData.user.id);   
       }
 
       setUser({

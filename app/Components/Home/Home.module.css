@@ -84,11 +84,10 @@
   opacity: 1;
 }
 
- .stepImageWrapper {
+.stepImageWrapper {
   flex: 1;
   display: flex;
   justify-content: center;
-  
 }
 
 .stepImage {
@@ -104,8 +103,6 @@
   transform: scale(1.05);
   box-shadow: 0 0 20px rgba(92, 26, 26, 0.7), 0 0 30px rgba(92, 26, 26, 0.5);
 }
-
-
 
 .stepContent {
   flex: 1;
@@ -227,18 +224,13 @@
   transition: transform 0.3s ease;
   box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
   cursor: pointer;
-
-
-    /* border: 2px solid #5c1a1a;  
-  box-shadow: 0 0 0 4px #fff;  */
-  border: 2px solid rgba(92, 26, 26, 0.7); 
-  box-shadow: 0 0 0 4px rgba(255, 255, 255, 0.5); 
+  border: 2px solid rgba(92, 26, 26, 0.7);
+  box-shadow: 0 0 0 4px rgba(255, 255, 255, 0.5);
 }
 
 .videoItem:hover {
   transform: scale(1.05);
-    box-shadow: 0 0 0 4px rgba(255, 255, 255, 0.5), 0 0 15px rgba(92, 26, 26, 0.5);
-
+  box-shadow: 0 0 0 4px rgba(255, 255, 255, 0.5), 0 0 15px rgba(92, 26, 26, 0.5);
 }
 
 .arrowLeft,
@@ -507,6 +499,18 @@
 
 .bounce {
   animation: bounce 1.5s infinite ease-in-out;
+}
+.weatherIconButton {
+  background-color: transparent;
+  border: none;
+  padding: 0;
+  box-shadow: none;
+  cursor: pointer;
+  margin: 0;
+}
+.bounceIcon {
+  background-color: transparent;
+  border: none;
 }
 
 @keyframes bounce {

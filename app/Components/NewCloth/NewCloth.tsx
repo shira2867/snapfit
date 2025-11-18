@@ -1,4 +1,3 @@
-// components/NewCloth.tsx
 "use client";
 
 import { useState } from "react";
@@ -100,7 +99,7 @@ const NewCloth = ({ userId }: { userId: string }) => {
       img.onload = async () => {
         const dominantColor = getDominantColorFromCenter(img);
         console.log("Detected dominant color:", dominantColor);
-        const rgbMatch = dominantColor.match(/\d+/g); // מחלץ [r, g, b]
+        const rgbMatch = dominantColor.match(/\d+/g);
         let colorName = "Unknown";
         if (rgbMatch) {
           const rgbArray: RGB = [
@@ -108,7 +107,7 @@ const NewCloth = ({ userId }: { userId: string }) => {
             parseInt(rgbMatch[1]),
             parseInt(rgbMatch[2]),
           ];
-          colorName = closestColor(rgbArray); // מחזיר שם צבע
+          colorName = closestColor(rgbArray); 
         }
         console.log("Mapped color name:", colorName);
         try {
@@ -123,11 +122,7 @@ const NewCloth = ({ userId }: { userId: string }) => {
           });
 
           alert("Item added successfully!");
-
-          // ניווט לעמוד MyLooks אחרי שהפריט נשמר
           router.push("/mycloset");
-
-          // איפוס השדות (לא חובה אם את נווטת מיד)
           setCategory("");
           setThickness("");
           setStyle("");

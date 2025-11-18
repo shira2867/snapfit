@@ -90,7 +90,6 @@ const MyLooks: React.FC<MyLooksProps> = ({ userId }) => {
     fetchLooks();
   }, [userId]);
 
-  // פונקציה לבדוק אם פריט מתאים לעונה
   const isItemInSeason = (item: ClothingItem, season: string) => {
     switch (season) {
       case "Spring":
@@ -114,7 +113,6 @@ const MyLooks: React.FC<MyLooksProps> = ({ userId }) => {
     const colorMatch = !colorFilter || itemColors.includes(colorFilter.toLowerCase());
     const seasonMatch =
       !seasonFilter || look.items.some((i) => isItemInSeason(i, seasonFilter));
-
     return styleMatch && colorMatch && seasonMatch;
   });
 
@@ -129,7 +127,6 @@ const MyLooks: React.FC<MyLooksProps> = ({ userId }) => {
         Filters
       </button>
 
-      {/* Sidebar */}
       <div className={`${styles.sidebar} ${sidebarOpen ? styles.sidebarOpen : ""}`}>
         <button className={styles.closeSidebar} onClick={() => setSidebarOpen(false)}>
           ×
@@ -171,9 +168,7 @@ const MyLooks: React.FC<MyLooksProps> = ({ userId }) => {
     </button>
   ))}
 </div>
-  
       </div>
-
       {loading ? (
         <p>Loading...</p>
       ) : filteredLooks.length === 0 ? (
