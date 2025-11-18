@@ -1,22 +1,26 @@
 .card {
+  display: flex;
+  flex-direction: column;
   border: 1px solid #ccc;
   border-radius: 12px;
   padding: 16px;
   background-color: #fff;
-  width: 100%; /* הכרטיס יתפוס את כל הרוחב של הקונטיינר */
-  max-width: 400px; /* אפשר להגביל רוחב מקסימלי */
-  margin: 0 auto; /* ממרכז את הכרטיס אם הרוחב קטן */
+  width: 100%; 
+  max-width: 400px; 
+  margin: 0 auto; 
+  height: 100%; 
 }
 
 .grid {
   display: grid;
-  grid-template-columns: repeat(2, 1fr); /* שתי תמונות בשורה */
-  gap: 16px; /* רווח בין התמונות */
+  grid-template-columns: repeat(2, 1fr); 
+  gap: 16px; 
+  flex-grow: 1; 
 }
 
 .itemWrapper {
   width: 100%;
-  aspect-ratio: 1 / 1; /* תמונה ריבועית */
+  aspect-ratio: 1 / 1; 
   overflow: hidden;
   border-radius: 10px;
 }
@@ -24,12 +28,42 @@
 .image {
   width: 100%;
   height: 100%;
-  object-fit: cover; /* תמונה ממלאת את הריבוע בלי לעוות את הפרופורציות */
+  object-fit: cover; 
 }
-.shareButton{
-    background: none;
-    border: none;
-    cursor: pointer;
-    font-weight: 500;
-    font-size: larger;
+
+/* Share Buttons */
+.shareButtons {
+  display: flex;
+  gap: 8px;
+  flex-wrap: wrap;
+  justify-content: center;
+  margin-top: auto; 
 }
+
+.shareButton {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  padding: 6px 10px;
+  border-radius: 4px;
+  cursor: pointer;
+  font-weight: 500;
+  font-size: larger;
+  color: #fff;
+  transition: background-color 0.2s;
+}
+
+.shareButton.copy { background-color: #000; }
+.shareButton.copy:hover { background-color: #333; }
+
+.shareButton.email { background-color: #1a73e8; }
+.shareButton.email:hover { background-color: #1558b0; }
+
+.shareButton.whatsapp { background-color: #25d366; }
+.shareButton.whatsapp:hover { background-color: #1da851; }
+
+.shareButton.facebook { background-color: #1877f2; }
+.shareButton.facebook:hover { background-color: #145dbf; }
+
+.shareButton.twitter { background-color: #1da1f2; }
+.shareButton.twitter:hover { background-color: #0d95e8; }
