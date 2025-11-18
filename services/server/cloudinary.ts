@@ -1,4 +1,3 @@
-// lib/cloudinary.ts
 import axios from "axios";
 
 export async function uploadToCloudinary(file: File) {

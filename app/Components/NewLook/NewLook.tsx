@@ -3,7 +3,7 @@ import Image from 'next/image';
 import React, { useState, useEffect } from "react";
 import styles from "./NewLook.module.css";
 import down from '../../../public/down.png';
-import { useUserStore } from "../../../store/userStore"; // אם את רוצה משם
+import { useUserStore } from "../../../store/userStore"; 
 
 type ClothingItem = {
   _id: string;
@@ -27,8 +27,6 @@ type LookType = {
 export default function NewLook() {
   const [selectedItems, setSelectedItems] = useState<ClothingItem[]>([]);
   const [isOpen, setIsOpen] = useState(false);
-
-  // שליפה של userId מהסטור או לוקלסטורג
   const userIdFromStore = useUserStore((state) => state.userId);
   const [userId, setUserId] = useState<string | null>(null);
 

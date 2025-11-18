@@ -67,7 +67,6 @@ margin-top: -10;
 .nav.open .link:nth-child(5) { transition-delay: 1.3s; }
 .nav.open .link:nth-child(6) { transition-delay: 1.6s; }
 
-/* כפתורים */
 .hamburger {
   display: block;
   background: none;
@@ -95,7 +94,6 @@ margin-top: -10;
   margin-right: 25px;
 }
 
-/* Overlay */
 .overlay {
   position: fixed;
   top: 0;

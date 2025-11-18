@@ -1,12 +1,18 @@
-"use client";
 import React, { useEffect, useState } from "react";
 import axios from "axios";
 import styles from "./DeleteHandleLooksModal.module.css";
 
-type Look = {
+type ClothingItem = {
   _id: string;
   imageUrl?: string;
-  // items אפשרי, לא צריך פה
+  category?: string;
+  colorName?: string;
+  style?: string;
+};
+
+type Look = {
+  _id: string;
+  items: ClothingItem[];
 };
 
 type Props = {
@@ -34,12 +40,12 @@ const DeleteHandleLooksModal: React.FC<Props> = ({
     const fetchRelated = async () => {
       setLoading(true);
       try {
-        const res = await axios.get(`/api/clothing?id=${clothingId}`);
-        const lookNames: string[] = res.data.lookNames ?? [];
-        // מביאים מבנים פשוטים לצורך הצגה — server מחזיר רק ה־_id של הלוקים
-        const tmpLooks = lookNames.map((id) => ({ _id: id }));
+        const res = await axios.get(
+          `/api/clothing/delete-and-handle-looks?id=${clothingId}`
+        );
+        const tmpLooks: Look[] = res.data.looks ?? [];
         setLooks(tmpLooks);
-        // ברירת מחדל לכל לוק: להסיר את הפריט מהלוק (update)
+
         const defaultActions: Record<string, "update" | "delete"> = {};
         tmpLooks.forEach((l) => (defaultActions[l._id] = "update"));
         setActions(defaultActions);
@@ -64,7 +70,6 @@ const DeleteHandleLooksModal: React.FC<Props> = ({
         lookId,
         action,
       }));
-      // שולחים לכל השרת — גם אם אין לוקים, נחזיר רשימת פעולות ריקה והשרת ימחק את הפריט
       const res = await axios.post(`/api/clothing/delete-and-handle-looks`, {
         clothingId,
         actionPerLook,
@@ -91,39 +96,41 @@ const DeleteHandleLooksModal: React.FC<Props> = ({
         {loading ? (
           <p>Loading related looks...</p>
         ) : looks.length === 0 ? (
-          <>
-            <p>
-              This item isn't used in any look. Are you sure you want to delete
-              it?
-            </p>
-          </>
+          <p>
+            This item isn't used in any look. Are you sure you want to delete
+            it?
+          </p>
         ) : (
-          <>
-            <p>Choose what to do for each look:</p>
-            <ul className={styles.lookList}>
-              {looks.map((look) => (
-                <li key={look._id} className={styles.lookItem}>
-                  <div>
-                    <strong>{look._id}</strong>
-                  </div>
-                  <div>
-                    <select
-                      value={actions[look._id]}
-                      onChange={(e) =>
-                        handleActionChange(
-                          look._id,
-                          e.target.value as "update" | "delete"
-                        )
-                      }
-                    >
-                      <option value="update">Remove item from look</option>
-                      <option value="delete">Delete entire look</option>
-                    </select>
-                  </div>
-                </li>
-              ))}
-            </ul>
-          </>
+          <div className={styles.looksContainer}>
+            {looks.map((look) => (
+              <div key={look._id} className={styles.lookCard}>
+                <div className={styles.lookGrid}>
+                  {look.items.map((item) => (
+                    <div key={item._id} className={styles.itemWrapper}>
+                      <img
+                        src={item.imageUrl}
+                        alt={item.category}
+                        className={styles.image}
+                      />
+                    </div>
+                  ))}
+                </div>
+                <select
+                  className={styles.select}
+                  value={actions[look._id]}
+                  onChange={(e) =>
+                    handleActionChange(
+                      look._id,
+                      e.target.value as "update" | "delete"
+                    )
+                  }
+                >
+                  <option value="update">Remove item from look</option>
+                  <option value="delete">Delete entire look</option>
+                </select>
+              </div>
+            ))}
+          </div>
         )}
 
         <div className={styles.modalActions}>

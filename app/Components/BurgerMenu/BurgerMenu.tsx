@@ -21,7 +21,6 @@ export default function BurgerMenu() {
         </Link>
       </div>
 
-      {/* תפריט */}
       <nav className={`${styles.nav} ${isOpen ? styles.open : ''}`}>
         <Link href="/home" className={styles.link} onClick={() => setIsOpen(false)}>Home</Link>
         <Link href="/about" className={styles.link} onClick={() => setIsOpen(false)}>About</Link>
@@ -31,7 +30,6 @@ export default function BurgerMenu() {
         <Link href="/stylefeed" className={styles.link} onClick={() => setIsOpen(false)}>Style Feed</Link>
       </nav>
 
-      {/* בורגר וכפתור משתמש */}
       <div className={styles.rightControls}>
         <button className={styles.userButton}>
           <Image src={user} alt="User" width={50} height={50} />
@@ -50,7 +48,6 @@ export default function BurgerMenu() {
         </button>
       </div>
 
-      {/* Overlay */}
       {isOpen && <div className={styles.overlay} onClick={() => setIsOpen(false)} />}
     </header>
   );

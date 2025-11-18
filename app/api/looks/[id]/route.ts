@@ -26,7 +26,7 @@ export async function GET(
     }
 
     return NextResponse.json({
-      _id: look._id, // כבר string, אין צורך ב-toString()
+      _id: look._id, 
       imageUrl: look.imageUrl ?? look.items?.[0]?.imageUrl ?? "",
       items: look.items ?? [],
       createdAt: look.createdAt,

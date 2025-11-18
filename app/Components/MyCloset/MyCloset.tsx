@@ -8,11 +8,9 @@ import all from "../../../public/summer_11907165.png";
 import coat from "../../../public/clothes_15930120.png";
 import shirt from "../../../public/crop-top_10339535.png";
 import Accessories from "../../../public/accessories_5029392.png";
-import DeleteHandleLooksModal from "../DeleteHandleLooksModal/DeleteHandleLooksModal"; // נתיב לפי המיקום שלך
+import DeleteHandleLooksModal from "../DeleteHandleLooksModal/DeleteHandleLooksModal"; 
 import pants from "../../../public/short_13387117.png";
 import filter from "../../../public/filter_7420963.png";
-
-// Icons
 import { FaTshirt, FaHatCowboy, FaUserTie, FaMale } from "react-icons/fa";
 import { GiClothes, GiLargeDress, GiSkirt } from "react-icons/gi";
 
@@ -28,7 +26,6 @@ type ClothingItem = {
 type MyClosetProps = {
   userId: string;
 };
-// Modal Component
 type ConfirmDeleteProps = {
   open: boolean;
   onClose: () => void;
@@ -86,7 +83,6 @@ const COLOR_MAP: Record<string, [number, number, number]> = {
   Beige: [245, 245, 220],
 };
 
-// UPDATED: icon-based categories
 const CATEGORIES = [
   {
     key: "All",
@@ -133,47 +129,8 @@ const MyCloset: React.FC<MyClosetProps> = ({ userId }) => {
   const [styleFilter, setStyleFilter] = useState<string | null>(null);
   const [seasonFilter, setSeasonFilter] = useState<string | null>(null);
   const [showFilters, setShowFilters] = useState(false);
-  /*------*/
-  // const [modalOpen, setModalOpen] = useState(false);
-  // const [selectedItemId, setSelectedItemId] = useState<string | null>(null);
-  // const [looksToDelete, setLooksToDelete] = useState<string[]>([]);
-
-  // const handleDeleteClick = async (id: string) => {
-  //   try {
-  //     const res = await axios.get(`/api/clothing?id=${id}`);
-  //     setLooksToDelete(res.data.lookNames);
-  //     setSelectedItemId(id);
-  //     setModalOpen(true);
-  //   } catch (err) {
-  //     console.error(err);
-  //     alert("Error fetching related looks");
-  //   }
-  // };
-
-  // const confirmDelete = async () => {
-  //   if (!selectedItemId) return;
-
-  //   try {
-  //     const res = await axios.delete(`/api/clothing?id=${selectedItemId}`);
-  //     if (res.status === 200) {
-  //       setClothes(clothes.filter((item) => item._id !== selectedItemId));
-  //       alert(
-  //         `Item deleted. Deleted looks: ${res.data.deletedLooks.join(", ")}`
-  //       );
-  //     }
-  //   } catch (err) {
-  //     console.error(err);
-  //     alert("Error deleting item");
-  //   } finally {
-  //     setModalOpen(false);
-  //     setSelectedItemId(null);
-  //     setLooksToDelete([]);
-  //   }
-  // };
   const [selectedClothing, setSelectedClothing] = useState<string | null>(null);
   const [modalOpen, setModalOpen] = useState(false);
-
-  /*------*/
   useEffect(() => {
     const fetchClothes = async () => {
       try {
@@ -208,11 +165,9 @@ const MyCloset: React.FC<MyClosetProps> = ({ userId }) => {
     }
     return true;
   });
-
   return (
     <div className={styles.container}>
       <div className={styles.mainContent}>
-        {/* Top categories row */}
         <div className={styles.categoryFilterRow}>
           <div className={styles.categoryRow}>
             {CATEGORIES.map((cat) => (
@@ -229,7 +184,6 @@ const MyCloset: React.FC<MyClosetProps> = ({ userId }) => {
               </button>
             ))}
           </div>
-
           {!showFilters && (
             <button
               className={styles.filterToggle}
@@ -239,8 +193,6 @@ const MyCloset: React.FC<MyClosetProps> = ({ userId }) => {
             </button>
           )}
         </div>
-
-        {/* Sidebar Filters */}
         <div
           className={`${styles.sidebarFilter} ${
             showFilters ? styles.open : ""
@@ -253,8 +205,6 @@ const MyCloset: React.FC<MyClosetProps> = ({ userId }) => {
           >
             <Image src={close} alt="Close Menu" width={30} height={30} />
           </button>
-
-          {/* Categories in mobile */}
           <div className={styles.categoryRowMobile}>
             {CATEGORIES.map((cat) => (
               <button
@@ -271,7 +221,6 @@ const MyCloset: React.FC<MyClosetProps> = ({ userId }) => {
               </button>
             ))}
           </div>
-
           <div className={styles.filterGroup}>
             <label>Color:</label>
             <div className={styles.colorOptions}>
@@ -291,7 +240,6 @@ const MyCloset: React.FC<MyClosetProps> = ({ userId }) => {
               ))}
             </div>
           </div>
-
           <div className={styles.filterGroup}>
             <label>Style:</label>
             <div className={styles.optionList}>
@@ -310,7 +258,6 @@ const MyCloset: React.FC<MyClosetProps> = ({ userId }) => {
               ))}
             </div>
           </div>
-
           <div className={styles.filterGroup}>
             <label>Season:</label>
             <div className={styles.optionList}>
@@ -330,8 +277,6 @@ const MyCloset: React.FC<MyClosetProps> = ({ userId }) => {
             </div>
           </div>
         </div>
-
-        {/* Closet content */}
         <div className={styles.closetContent}>
           {loading ? (
             <p className={styles.loading}>Loading...</p>
@@ -355,12 +300,6 @@ const MyCloset: React.FC<MyClosetProps> = ({ userId }) => {
                       }}
                     />
                   </div>
-                  {/* <button
-                    onClick={() => handleDeleteClick(item._id)}
-                    className={styles.deleteButton}
-                  >
-                    Delete
-                  </button> */}
                   <button
                     onClick={() => {
                       setSelectedClothing(item._id);
@@ -376,12 +315,6 @@ const MyCloset: React.FC<MyClosetProps> = ({ userId }) => {
           )}
         </div>
       </div>
-      {/* <ConfirmDelete
-        open={modalOpen}
-        onClose={() => setModalOpen(false)}
-        onConfirm={confirmDelete}
-        lookNames={looksToDelete}
-      /> */}
       {selectedClothing && (
         <DeleteHandleLooksModal
           clothingId={selectedClothing}
@@ -391,12 +324,9 @@ const MyCloset: React.FC<MyClosetProps> = ({ userId }) => {
             setSelectedClothing(null);
           }}
           onComplete={({ updated, deleted }) => {
-            // עדכון UI אחרי ביצוע: נרצה להסיר את הפריט מרשימת הפריטים
-            // (פריט נמחק תמיד בסוף התהליך), לכן נסיר אותו מה-state
             setClothes((prev) =>
               prev.filter((c) => c._id !== selectedClothing)
             );
-            // אפשר גם להראות הודעה למשתמש
             if ((updated?.length ?? 0) + (deleted?.length ?? 0) > 0) {
               alert(
                 `Updated ${updated.length} looks, deleted ${deleted.length} looks.`

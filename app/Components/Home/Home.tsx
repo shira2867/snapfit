@@ -221,13 +221,16 @@ export default function HomePage() {
                       className={styles.bounce}
                     />
                   </div>
-                  <button onClick={() => setIsOpen(true)}>
+                  <button
+                    onClick={() => setIsOpen(true)}
+                    className={styles.weatherIconButton}
+                  >
                     <Image
                       src={sunIcon}
                       alt="sun icon"
                       width={60}
                       height={60}
-                      className={styles.bounce}
+                      className={styles.bounceIcon}
                     />
                   </button>
                 </div>
