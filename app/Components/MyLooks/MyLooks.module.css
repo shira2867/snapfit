@@ -60,12 +60,14 @@
 }
 .cardsWrapper {
   display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(250px, 1fr)); 
-  gap: 16px;
+  grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); /* כל כרטיס לפחות 280px ורוחב גמיש */
+  gap: 24px;
   margin-top: 16px;
   margin-bottom: 60px;
-  justify-items: center; 
+  justify-items: center;
 }
+
+
 
 
 .sidebarToggle {
@@ -158,4 +160,15 @@
   height: 100%;
   background: rgba(0, 0, 0, 0.3);
   z-index: 999;
+}
+@media (max-width: 900px) {
+  .cardsWrapper {
+    grid-template-columns: repeat(2, 1fr); 
+  }
+}
+
+@media (max-width: 600px) {
+  .cardsWrapper {
+    grid-template-columns: 1fr; 
+  }
 }
