@@ -1,32 +1,40 @@
 "use client";
-import { useEffect, useState } from "react";
+
+import { FC, useState } from "react";
+import { useQuery } from "@tanstack/react-query";
 import styles from "./WeatherWidget.module.css";
 
-export default function WeatherWidget() {
-  const [loaded, setLoaded] = useState(false);
+const loadWeatherScript = (): Promise<boolean> => {
+  return new Promise((resolve, reject) => {
+    const existing = document.querySelector('script[data-weather-widget]');
+    if (existing) existing.remove();
 
-  useEffect(() => {
     const script = document.createElement("script");
     script.src = "https://weatherwidget.io/js/widget.min.js";
     script.async = true;
+    script.setAttribute("data-weather-widget", "israel"); 
 
-    script.onload = () => {
-      setLoaded(true);
-    };
+    script.onload = () => resolve(true); 
+    script.onerror = () => reject(new Error("Failed to load weather script"));
 
     document.body.appendChild(script);
+  });
+};
 
-    return () => {
-      document.body.removeChild(script);
-    };
-  }, []);
+const WeatherWidget: FC = () => {
+  const [city, setCity] = useState("israel");
+
+  const { data: loaded, isLoading, isError } = useQuery({
+    queryKey: ["weatherScript", city],
+    queryFn: loadWeatherScript,
+    staleTime: Infinity,
+  });
+
+  if (isLoading) return <div className={styles.weatherContainer}>Loading...</div>;
+  if (isError) return <div className={styles.weatherContainer}>Failed to load widget</div>;
 
   return (
-    <div
-      className={`${styles.weatherContainer} ${
-        loaded ? styles.visible : styles.hidden
-      }`}
-    >
+    <div className={styles.weatherContainer}>
       {loaded && (
         <a
           className="weatherwidget-io"
@@ -40,4 +48,6 @@ export default function WeatherWidget() {
       )}
     </div>
   );
-}
+};
+
+export default WeatherWidget;

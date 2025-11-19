@@ -8,8 +8,6 @@ import logo from '../../../public/logo.png';
 import Link from 'next/link';
 import { FormData } from "@/types/userTypes";
 
-        
-
 import {
   getAuth,
   signInWithPopup,
@@ -20,6 +18,7 @@ import {
 } from "firebase/auth";
 import { useUserStore } from "@/store/userStore";
 
+import { useMutation } from "@tanstack/react-query";
 import styles from "./SignupForm.module.css";
 
 const firebaseConfig = {
@@ -35,55 +34,60 @@ const app = initializeApp(firebaseConfig);
 const auth = getAuth(app);
 const provider = new GoogleAuthProvider();
 
-
-
 export default function AuthForm() {
   const [user, setUser] = useState<User | null>(null);
   const { register, handleSubmit } = useForm<FormData>();
   const router = useRouter();
   const setUserStore = useUserStore((state) => state.setUser);
-  const currentUser = useUserStore((state) => state.user);
 
-  React.useEffect(() => {
-    console.log("Current user in store:", currentUser);
-  }, [currentUser]);
+  // ---------- React Query mutations ----------
+  const registerUserMutation = useMutation({
+    mutationFn: async (payload: any) => {
+      const res = await fetch("/api/user/register", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(payload),
+      });
+      return res.json();
+    },
+    onSuccess: (data, variables) => {
+      setUserStore({
+        name: variables.name || "",
+        email: variables.email || null,
+        profileImage: variables.profileImage || "",
+        gender: null,
+      });
 
+      if (data.message === "User updated") {
+        router.push("/login");
+      } else {
+        router.push("/complete-profile");
+      }
+    },
+    onError: (error: any) => {
+      alert(error.message || "Error creating account");
+    },
+  });
 
+  // ---------- Google Sign-In ----------
   async function signInWithGoogle() {
     try {
       const result = await signInWithPopup(auth, provider);
       const firebaseUser = result.user;
-      const res = await fetch("/api/user/register", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({
-          name: firebaseUser.displayName,
-          email: firebaseUser.email,
-          profileImage: firebaseUser.photoURL, 
-        }),
+
+      registerUserMutation.mutate({
+        name: firebaseUser.displayName,
+        email: firebaseUser.email,
+        profileImage: firebaseUser.photoURL,
       });
 
-      const data = await res.json();
-
-      useUserStore.getState().setUser({
-        name: firebaseUser.displayName || null,
-        email: firebaseUser.email || null,
-        profileImage: firebaseUser.photoURL || null,
-        gender: null,
-      });
-
-      useUserStore.getState().setUserId(firebaseUser.uid);
-
-      if (data.message === "User updated") {
-        router.push("/home"); 
-      } else {
-        router.push("/complete-profile"); 
-      }
+      setUser(firebaseUser);
     } catch (error) {
       console.error("Google Login Error:", error);
     }
   }
 
+  // ---------- Email/Password Sign-Up ----------
   async function onSubmit(data: FormData) {
     try {
       const userCredential = await createUserWithEmailAndPassword(
@@ -94,31 +98,11 @@ export default function AuthForm() {
       const firebaseUser = userCredential.user;
       setUser(firebaseUser);
 
-      const res = await fetch("/api/user/register", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({
-          email: firebaseUser.email,
-          password: data.password,
-          createdAt: new Date(),
-        }),
+      registerUserMutation.mutate({
+        email: firebaseUser.email,
+        password: data.password,
+        createdAt: new Date(),
       });
-
-      const resData = await res.json();
-
-      setUserStore({
-        name: "",
-        email: firebaseUser.email || null,
-        profileImage: "",
-        gender: null,
-      });
-
-      if (resData.message === "User updated") {
-        alert("Email already registered. Redirecting to login.");
-        router.push("/login");
-      } else {
-        router.push("/complete-profile");
-      }
     } catch (error: any) {
       if (error.code === "auth/email-already-in-use") {
         alert("The email is already registered. Please log in instead.");
@@ -129,6 +113,7 @@ export default function AuthForm() {
     }
   }
 
+  // ---------- Sign Out ----------
   function signOutUser() {
     signOut(auth)
       .then(() => {
@@ -137,6 +122,8 @@ export default function AuthForm() {
       })
       .catch(console.error);
   }
+
+  // ---------- Render ----------
   return (
     <div className={styles.signupPage}>
       <div className={styles.localHeader}>
