@@ -10,7 +10,8 @@
 
 .logoContainer {
   display: flex;
-  align-items: center;
+  margin-left: -50px;
+  margin-top: -10px;
 }
 
 .nav {

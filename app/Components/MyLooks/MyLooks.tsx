@@ -1,13 +1,12 @@
 "use client";
-import React, { useEffect, useState } from "react";
+import React, { useState } from "react";
+import { useQuery } from "@tanstack/react-query";
 import axios from "axios";
 import styles from "./MyLooks.module.css";
 import LookCard from "../LookCard/LookCard";
-import {ClothingItem} from "@/types/clothTypes";
-
+import { ClothingItem } from "@/types/clothTypes";
 import { LookType } from "@/types/lookTypes";
-
-
+import { fetchLooks } from "@/services/client/look";
 type MyLooksProps = {
   userId: string;
 };
@@ -30,53 +29,19 @@ const COLOR_MAP: Record<string, [number, number, number]> = {
 const styleOptions = ["All", "casual", "formal", "sporty", "party"];
 const seasons = ["Spring", "Summer", "Autumn", "Winter"];
 
-const MyLooks: React.FC<MyLooksProps> = ({ userId }) => {
-  const [looks, setLooks] = useState<LookType[]>([]);
-  const [loading, setLoading] = useState(true);
 
+
+const MyLooks: React.FC<MyLooksProps> = ({ userId }) => {
   const [styleFilter, setStyleFilter] = useState<string>("All");
   const [colorFilter, setColorFilter] = useState<string | null>(null);
   const [seasonFilter, setSeasonFilter] = useState<string | null>(null);
   const [sidebarOpen, setSidebarOpen] = useState(false);
 
-  useEffect(() => {
-    const fetchLooks = async () => {
-      try {
-        const res = await axios.get(`/api/looks?userId=${userId}`);
-        const looksWithDominants: LookType[] = res.data.map((look: LookType) => {
-          const colorCount: Record<string, number> = {};
-          look.items.forEach((i) => {
-            const name = i.colorName || "Black";
-            colorCount[name] = (colorCount[name] || 0) + 1;
-          });
-          const dominantColor =
-            Object.entries(colorCount).sort((a, b) => b[1] - a[1])[0]?.[0] ||
-            "Black";
-
-          const styleCount: Record<string, number> = {};
-          look.items.forEach((i) => {
-            const style = i.style || "casual";
-            styleCount[style] = (styleCount[style] || 0) + 1;
-          });
-          const dominantStyle =
-            Object.entries(styleCount).sort((a, b) => b[1] - a[1])[0]?.[0] ||
-            "casual";
-
-          return {
-            ...look,
-            colorName: dominantColor,
-            style: dominantStyle,
-          };
-        });
-        setLooks(looksWithDominants);
-      } catch (err) {
-        console.error("Failed to fetch looks", err);
-      } finally {
-        setLoading(false);
-      }
-    };
-    fetchLooks();
-  }, [userId]);
+  const { data: looks = [], isLoading } = useQuery<LookType[], Error>({
+    queryKey: ["looks", userId],
+    queryFn: () => fetchLooks(userId),
+    staleTime: 5 * 60 * 1000, // 5 דקו
+  });
 
   const isItemInSeason = (item: ClothingItem, season: string) => {
     switch (season) {
@@ -101,7 +66,7 @@ const MyLooks: React.FC<MyLooksProps> = ({ userId }) => {
     const colorMatch = !colorFilter || itemColors.includes(colorFilter.toLowerCase());
     const seasonMatch =
       !seasonFilter || look.items.some((i) => isItemInSeason(i, seasonFilter));
-    console.log("Filtering look", "lookID", look._id, { styleMatch, colorMatch, seasonMatch });
+
     return styleMatch && colorMatch && seasonMatch;
   });
 
@@ -157,9 +122,9 @@ const MyLooks: React.FC<MyLooksProps> = ({ userId }) => {
             </button>
           ))}
         </div>
-
       </div>
-      {loading ? (
+
+      {isLoading ? (
         <p>Loading...</p>
       ) : filteredLooks.length === 0 ? (
         <p>No looks found.</p>

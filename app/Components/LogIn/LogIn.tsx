@@ -9,9 +9,10 @@ import {
   signInWithPopup,
   GoogleAuthProvider,
   signInWithEmailAndPassword,
+  User,
 } from "firebase/auth";
-
 import { useUserStore } from "@/store/userStore";
+import { useMutation } from "@tanstack/react-query";
 import styles from "./Login.module.css";
 import { FormData } from "../../../types/userTypes";
 
@@ -28,88 +29,72 @@ const app = initializeApp(firebaseConfig);
 const auth = getAuth(app);
 const provider = new GoogleAuthProvider();
 
-
-
 export default function LoginForm() {
   const { register, handleSubmit } = useForm<FormData>();
   const router = useRouter();
-
   const setUser = useUserStore((state) => state.setUser);
   const setUserId = useUserStore((state) => state.setUserId);
-
   const [errorMessage, setErrorMessage] = useState("");
 
-  async function loginWithGoogle() {
-    try {
-      const result = await signInWithPopup(auth, provider);
-      const firebaseUser = result.user;
+  // ---------- React Query mutation ----------
+  const loginMutation = useMutation<
+    { firebaseUser: User; dbData: any },
+    any,
+    FormData & { method: "google" | "email" }
+  >({
+    mutationFn: async (data) => {
+      if (data.method === "google") {
+        const result = await signInWithPopup(auth, provider);
+        const firebaseUser = result.user;
 
-      const res = await fetch(`/api/user?email=${firebaseUser.email}`);
-      const data = await res.json();
+        const res = await fetch(`/api/user?email=${firebaseUser.email}`);
+        const dbData = await res.json();
 
-      if (!data.exists) {
-        alert("User not found. Please register first.");
-        router.push("/signup");
-        return;
+        if (!dbData.exists) throw new Error("User not found. Please register first.");
+
+        return { firebaseUser, dbData };
+      } else {
+        const res = await fetch(`/api/user?email=${data.email}`);
+        const dbData = await res.json();
+        if (!dbData.exists) throw new Error("User not found. Please register first.");
+
+        const userCredential = await signInWithEmailAndPassword(
+          auth,
+          data.email!,
+          data.password!
+        );
+
+        return { firebaseUser: userCredential.user, dbData };
       }
-
-      if (data.user?.id) {
-        setUserId(data.user.id); 
-      }
+    },
+    onSuccess: ({ firebaseUser, dbData }) => {
+      if (dbData.user?.id) setUserId(dbData.user.id);
 
       setUser({
-        name: firebaseUser.displayName || null,
+        name: dbData.user?.name || firebaseUser.displayName || "",
         email: firebaseUser.email || null,
-        profileImage: firebaseUser.photoURL || null,
-        gender: data.user?.gender || null,
-      });
-
-      router.push("/home");
-    } catch (err) {
-      console.error(err);
-      setErrorMessage("Google login failed.");
-    }
-  }
-
-  async function onSubmit(data: FormData) {
-    try {
-      const res = await fetch(`/api/user?email=${data.email}`);
-      const dbData = await res.json();
-
-      if (!dbData.exists) {
-        setErrorMessage("User not found. Please register first.");
-        return;
-      }
-
-      const userCredential = await signInWithEmailAndPassword(
-        auth,
-        data.email,
-        data.password
-      );
-
-      const firebaseUser = userCredential.user;
-
-      if (dbData.user?.id) {
-        setUserId(dbData.user.id);   
-      }
-
-      setUser({
-        name: dbData.user?.name || "",
-        email: firebaseUser.email || null,
-        profileImage: dbData.user?.profileImage || "",
+        profileImage: dbData.user?.profileImage || firebaseUser.photoURL || "",
         gender: dbData.user?.gender || null,
       });
 
       router.push("/home");
-    } catch (err: any) {
+    },
+    onError: (err: any) => {
       console.error(err);
-      if (err.code === "auth/wrong-password") {
-        setErrorMessage("Incorrect password.");
-      } else {
-        setErrorMessage("Login failed.");
-      }
-    }
-  }
+      setErrorMessage(err.message || "Login failed");
+    },
+  });
+
+  // ---------- Handlers ----------
+  const handleGoogleLogin = () => {
+    setErrorMessage("");
+    loginMutation.mutate({ method: "google", email: "", password: "" });
+  };
+
+  const handleEmailLogin = (data: FormData) => {
+    setErrorMessage("");
+    loginMutation.mutate({ ...data, method: "email" });
+  };
 
   return (
     <div className={styles.loginPage}>
@@ -118,16 +103,21 @@ export default function LoginForm() {
       </div>
 
       <div className={styles.container}>
-        <form onSubmit={handleSubmit(onSubmit)} className={styles.form}>
+        <form onSubmit={handleSubmit(handleEmailLogin)} className={styles.form}>
           <h2>Login</h2>
 
           <button
             type="button"
-            onClick={loginWithGoogle}
+            onClick={handleGoogleLogin}
             className={styles.googleButton}
+            disabled={loginMutation.isPending}
           >
-            <Image src="/google.png" alt="Google" width={18} height={18} />
-            Continue with Google
+            {loginMutation.isPending && loginMutation.variables?.method === "google"
+              ? "Logging in..."
+              : <>
+                  <Image src="/google.png" alt="Google" width={18} height={18} />
+                  Continue with Google
+                </>}
           </button>
 
           <div className={styles.orDivider}>Or</div>
@@ -146,8 +136,14 @@ export default function LoginForm() {
 
           {errorMessage && <p className={styles.error}>{errorMessage}</p>}
 
-          <button type="submit" className={styles.button}>
-            Login
+          <button
+            type="submit"
+            className={styles.button}
+            disabled={loginMutation.isPending && loginMutation.variables?.method === "email"}
+          >
+            {loginMutation.isPending && loginMutation.variables?.method === "email"
+              ? "Logging in..."
+              : "Login"}
           </button>
 
           <p className={styles.signupLink}>
