@@ -9,20 +9,11 @@ import Footer from "../Footer/Footer";
 import styles from "./NewCloth.module.css";
 import { getDominantColorFromCenter } from "@/services/server/colorUtils";
 import { uploadToCloudinary } from "@/services/server/cloudinary";
-
+import { ClothingItemPayload } from "@/types/clothTypes";
 type NewClothProps = {
   userId: string;
 };
 
-type ClothingItemPayload = {
-  userId: string;
-  category: string;
-  thickness: "light" | "medium" | "heavy";
-  style: string;
-  imageUrl: string;
-  color: string;
-  colorName: string;
-};
 
 type RGB = [number, number, number];
 
@@ -185,10 +176,10 @@ const NewCloth: React.FC<NewClothProps> = ({ userId }) => {
             <label>Thickness</label>
             <select
               value={thickness}
-              onChange={(e) => setThickness(e.target.value)}
+              onChange={(e) => setThickness(e.target.value as "light" | "medium" | "heavy")}
             >
               <option value="">Select thickness</option>
-              {thicknesses.map((c) => (
+              {thicknessOptions.map((c) => (
                 <option key={c}>{c}</option>
               ))}
             </select>
