@@ -52,8 +52,7 @@ export function CommentForm({
     try {
       const res = await axios.post(`/api/sharelook/${lookId}/comment`, {
         userId,
-        text,
-      });
+  text      });
       onNewComment(res.data.comment);
       setText("");
     } catch (err) {
@@ -100,7 +99,6 @@ export default function SharedLookCard({ look }: Props) {
       <div className={styles.info}>
         <span>{look.items.length} פריטים</span>
         <span>❤️ {look.likes?.length || 0}</span>
-        <div>{look.comments?.length}</div>
       </div>
     </div>
   );

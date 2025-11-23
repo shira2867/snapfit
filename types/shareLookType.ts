@@ -14,5 +14,5 @@ export type ShareLookType = {
   items: ClothingItem[];      
   createdAt: string | Date;
   likes: string[];        
-  comments: LookComment[]; 
+  comment: LookComment[]; 
 };
