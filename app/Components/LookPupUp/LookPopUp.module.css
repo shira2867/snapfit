@@ -20,6 +20,12 @@
   width: 90%;
   max-width: 900px;
   max-height: 90vh;
+.modalContent {
+  background: #ffffff;
+  width: 80vw;      
+  max-width: 900px; 
+  height: 80vh;     
+  max-height: 900px;
   overflow-y: auto;
   border-radius: 18px;
   padding: 20px 20px 16px;
@@ -29,6 +35,7 @@
 }
 
 /* Close button */
+
 .closeX {
   position: absolute;
   top: 10px;
