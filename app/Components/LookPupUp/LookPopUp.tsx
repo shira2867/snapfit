@@ -2,10 +2,12 @@
 
 import { useState, useEffect } from "react";
 import { useRouter } from "next/navigation";
+import Image from "next/image";
 import { ShareLookType } from "@/types/shareLookType";
 import styles from "./LookPopUp.module.css";
 import { LikeButton, CommentForm } from "../LikeAndComment/LikeAndComment";
 import { useUserStore } from "@/store/userStore";
+import down from "../../../public/img/down.png";
 
 type Props = {
   look: ShareLookType;
@@ -66,11 +68,12 @@ export default function LookPopup({ look, onClose }: Props) {
           ))}
         </div>
 
-        {/* Comments section */}
-        <div className={styles.createLook}>
-          <button onClick={handleShareAll}>Share with everyone</button>
-        </div>
+        <button className={styles.createButton} onClick={handleShareAll}>
+        Create this look
+        </button>
 
+
+        {/* Comments section */}
         <div className={styles.commentsSection}>
           <CommentForm
             lookId={look._id}

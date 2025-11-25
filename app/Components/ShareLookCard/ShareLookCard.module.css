@@ -16,7 +16,8 @@
   transition: transform 0.2s ease, box-shadow 0.3s ease;
   cursor: pointer;
   width: 100%;
-  max-width: 320px;
+  max-width: 340px;
+  min-height: 380px; /* <- תוספת קטנה שמאפשרת ללייק להיכנס */
   aspect-ratio: 3 / 4; /* Fixed card ratio for consistency */
   display: flex;
   flex-direction: column;
@@ -77,7 +78,7 @@
 
   .card {
     max-width: 100%;
-    aspect-ratio: 3 / 4;
+    aspect-ratio: 3 / 6;
   }
 
   .grid {
