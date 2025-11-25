@@ -2,9 +2,11 @@
 import React, { useState, useEffect } from "react";
 import styles from "./LookCard.module.css";
 import { FiShare2, FiMail, FiMessageCircle, FiUpload } from "react-icons/fi";
-import { FaFacebookF, FaTimes } from "react-icons/fa";
+import { FaFacebookF, FaTimes, FaTrash } from "react-icons/fa";
 import { ClothingItem } from "@/types/clothTypes";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
+import { useUserStore } from "@/store/userStore";
+import { useRouter } from "next/navigation";
 
 type LookCardProps = {
   items: ClothingItem[];
@@ -15,10 +17,12 @@ const LookCard: React.FC<LookCardProps> = ({ items, lookId }) => {
   const [isShared, setIsShared] = useState(false);
   const [sharedLookId, setSharedLookId] = useState<string | null>(null);
   const [isPopupOpen, setIsPopupOpen] = useState(false);
-
+  const [isDeleted, setIsDeleted] = useState(false); // ← הוספתי
   const BASE_URL = typeof window !== "undefined" ? window.location.origin : "";
   const lookUrl = `${BASE_URL}/sharelookpersonal/${lookId}`;
   const queryClient = useQueryClient();
+  const userId = useUserStore((state) => state.userId);
+  const router = useRouter();
 
   const { data: shareStatus } = useQuery({
     queryKey: ["shareLookStatus", lookId],
@@ -81,9 +85,7 @@ const LookCard: React.FC<LookCardProps> = ({ items, lookId }) => {
     onSuccess: (data) => {
       setIsShared(true);
       setSharedLookId(data._id);
-
       queryClient.invalidateQueries({ queryKey: ["shareLookStatus", lookId] });
-
       alert("Look added to StyleFeed!");
     },
   });
@@ -103,10 +105,31 @@ const LookCard: React.FC<LookCardProps> = ({ items, lookId }) => {
       setIsShared(false);
       setSharedLookId(null);
       queryClient.invalidateQueries({ queryKey: ["shareLookStatus", lookId] });
-
       alert("Look removed from StyleFeed");
     },
   });
+
+  const deleteLook = async (e: React.MouseEvent) => {
+    e.stopPropagation();
+    if (!lookId || !userId) return;
+    if (!confirm("Are you sure you want to delete this look?")) return;
+
+    try {
+      const res = await fetch(`/api/looks/${lookId}`, { method: "DELETE" });
+      const data = await res.json();
+      if (!res.ok) throw new Error(data.error || "Failed to delete look");
+
+      alert("Look deleted successfully!");
+      setIsDeleted(true); // ← מוסיף כאן כדי להסתיר את הלוק
+      queryClient.invalidateQueries({ queryKey: ["userLooks", userId] });
+      setIsPopupOpen(false);
+    } catch (err: any) {
+      alert(err.message || "Failed to delete look");
+    }
+  };
+
+  // ← אם הלוק נמחק, לא מציגים אותו בכלל
+  if (isDeleted) return null;
 
   return (
     <div className={styles.card} style={{ cursor: "pointer" }}>
@@ -115,13 +138,9 @@ const LookCard: React.FC<LookCardProps> = ({ items, lookId }) => {
           <div
             key={item._id}
             className={styles.itemWrapper}
-            onClick={() => setIsPopupOpen(true)} // ← כאן!
+            onClick={() => setIsPopupOpen(true)}
           >
-            <img
-              src={item.imageUrl}
-              alt={item.category}
-              className={styles.image}
-            />
+            <img src={item.imageUrl} alt={item.category} className={styles.image} />
           </div>
         ))}
       </div>
@@ -161,8 +180,17 @@ const LookCard: React.FC<LookCardProps> = ({ items, lookId }) => {
             ✖
           </button>
         )}
+
+        {lookId && (
+          <button
+            className={`${styles.shareButton} ${styles.deleteButton}`}
+            onClick={deleteLook}
+          >
+            <FaTrash size={18} />
+          </button>
+        )}
       </div>
-      {/* Popup גדול של הלוק בלבד */}
+
       {isPopupOpen && (
         <div
           className={styles.modalBackdrop}
@@ -183,7 +211,7 @@ const LookCard: React.FC<LookCardProps> = ({ items, lookId }) => {
                 <div
                   key={item._id}
                   className={styles.itemWrapperLarge}
-                  onClick={() => setIsPopupOpen(true)} // ← כאן!
+                  onClick={() => setIsPopupOpen(true)}
                 >
                   <img
                     src={item.imageUrl}

@@ -6,11 +6,8 @@ import axios from "axios";
 import Image from "next/image";
 import down from "../../../public/img/down.png";
 import styles from "./LookCreator.module.css";
-  import {ClothingItem} from '@/types/clothTypes'
+import {ClothingItem} from '@/types/clothTypes'
 import {LookType as Look} from '@/types/lookTypes'
-
-
-
 
 type Props = {
   look: Look;
