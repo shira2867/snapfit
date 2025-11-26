@@ -32,15 +32,38 @@ const COLOR_MAP: Record<string, [number, number, number]> = {
 };
 
 const CATEGORIES = [
-
-  { key: "All", image: <Image src={all} alt="All clothes" width={30} height={30} /> },
-  { key: "shirt", image: <Image src={shirt} alt="shirt" width={30} height={30} /> },
-  { key: "pants", image: <Image src={pants} alt="pants" width={30} height={30} /> },
-  { key: "Jacket&coat", image: <Image src={coat} alt="coat" width={30} height={30} /> },
-  { key: "dress", image: <Image src={all} alt="dress" width={30} height={30} /> },
-  { key: "Skirts", image: <Image src={all} alt="skirt" width={30} height={30} /> },
-  { key: "Shoes", image: <Image src={all} alt="shoes" width={30} height={30} /> },
-  { key: "Accessories", image: <Image src={accessories} alt="Accessories" width={30} height={30} /> },
+  {
+    key: "All",
+    image: <Image src={all} alt="All clothes" width={30} height={30} />,
+  },
+  {
+    key: "shirt",
+    image: <Image src={shirt} alt="shirt" width={30} height={30} />,
+  },
+  {
+    key: "pants",
+    image: <Image src={pants} alt="pants" width={30} height={30} />,
+  },
+  {
+    key: "Jacket&coat",
+    image: <Image src={coat} alt="coat" width={30} height={30} />,
+  },
+  {
+    key: "dress",
+    image: <Image src={all} alt="dress" width={30} height={30} />,
+  },
+  {
+    key: "Skirts",
+    image: <Image src={all} alt="skirt" width={30} height={30} />,
+  },
+  {
+    key: "Shoes",
+    image: <Image src={all} alt="shoes" width={30} height={30} />,
+  },
+  {
+    key: "Accessories",
+    image: <Image src={accessories} alt="Accessories" width={30} height={30} />,
+  },
 ];
 
 const STYLES = ["casual", "sporty", "formal"];
@@ -115,7 +138,10 @@ const MyCloset: React.FC<MyClosetProps> = ({ userId, inspirationColors }) => {
                 className={styles.clothImage}
                 draggable
                 onDragStart={(e) => {
-                  e.dataTransfer.setData("application/json", JSON.stringify(item));
+                  e.dataTransfer.setData(
+                    "application/json",
+                    JSON.stringify(item)
+                  );
                 }}
               />
             </div>
@@ -144,8 +170,12 @@ const MyCloset: React.FC<MyClosetProps> = ({ userId, inspirationColors }) => {
               <button
                 key={cat.key}
                 type="button"
-                className={`${styles.categoryButton} ${categoryFilter === cat.key ? styles.active : ""}`}
-                onClick={() => setCategoryFilter(cat.key === "All" ? null : cat.key)}
+                className={`${styles.categoryButton} ${
+                  categoryFilter === cat.key ? styles.active : ""
+                }`}
+                onClick={() =>
+                  setCategoryFilter(cat.key === "All" ? null : cat.key)
+                }
                 aria-pressed={categoryFilter === cat.key}
                 aria-label={`Filter by ${cat.key}`}
               >
@@ -171,7 +201,9 @@ const MyCloset: React.FC<MyClosetProps> = ({ userId, inspirationColors }) => {
 
         <div
           id={filterPanelId}
-          className={`${styles.sidebarFilter} ${showFilters ? styles.open : ""}`}
+          className={`${styles.sidebarFilter} ${
+            showFilters ? styles.open : ""
+          }`}
           aria-hidden={!showFilters}
         >
           <div className={styles.sidebarHeader}>
@@ -233,8 +265,12 @@ const MyCloset: React.FC<MyClosetProps> = ({ userId, inspirationColors }) => {
                 <button
                   key={style}
                   type="button"
-                  className={`${styles.filterButton} ${styleFilter === style ? styles.active : ""}`}
-                  onClick={() => setStyleFilter(styleFilter === style ? null : style)}
+                  className={`${styles.filterButton} ${
+                    styleFilter === style ? styles.active : ""
+                  }`}
+                  onClick={() =>
+                    setStyleFilter(styleFilter === style ? null : style)
+                  }
                   aria-pressed={styleFilter === style}
                 >
                   {style}
@@ -250,8 +286,12 @@ const MyCloset: React.FC<MyClosetProps> = ({ userId, inspirationColors }) => {
                 <button
                   key={season}
                   type="button"
-                  className={`${styles.filterButton} ${seasonFilter === season ? styles.active : ""}`}
-                  onClick={() => setSeasonFilter(seasonFilter === season ? null : season)}
+                  className={`${styles.filterButton} ${
+                    seasonFilter === season ? styles.active : ""
+                  }`}
+                  onClick={() =>
+                    setSeasonFilter(seasonFilter === season ? null : season)
+                  }
                   aria-pressed={seasonFilter === season}
                 >
                   {season}
@@ -329,4 +369,3 @@ const MyCloset: React.FC<MyClosetProps> = ({ userId, inspirationColors }) => {
 };
 
 export default MyCloset;
-
