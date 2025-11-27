@@ -22,11 +22,10 @@ export async function GET(
         likes: [],
         items: [],
         comments: [],
-        profileImage: null, // אם לא קיים
+        profileImage: null, 
       }, { status: 200 });
     }
 
-    // אם יש userId, נביא את תמונת הפרופיל שלו
     let profileImage = null;
     if (look.userId) {
       const usersCol = await usersCollection();
