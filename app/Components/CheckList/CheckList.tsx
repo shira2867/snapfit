@@ -103,8 +103,9 @@ export default function CheckList({ userId }: Props) {
       axios
         .put(`/api/checklist`, { id: editingNote._id, text: text })
         .then(() => {
-          queryClient.invalidateQueries(["checklist", userId]);
-          setIsEditorOpen(false);
+          queryClient.invalidateQueries({
+            queryKey: ["checklist", userId]
+          }); setIsEditorOpen(false);
         })
         .catch((err) => alert("Error updating note: " + err.message));
     } else {
@@ -126,7 +127,7 @@ export default function CheckList({ userId }: Props) {
             padding: "0 1rem",
           }}
         >
-                   {" "}
+          {" "}
           <h2
             style={{
               fontFamily: "Playfair Display, Georgia, serif",
@@ -134,9 +135,9 @@ export default function CheckList({ userId }: Props) {
               color: "var(--color-text)",
             }}
           >
-                        My Notes          {" "}
+            My Notes          {" "}
           </h2>
-                   {" "}
+          {" "}
           <button
             className={styles.deleteButton}
             onClick={() => openEditor()}
@@ -147,7 +148,7 @@ export default function CheckList({ userId }: Props) {
               boxShadow: "0 8px 18px rgba(92, 26, 26, 0.3)",
             }}
           >
-                        ➕ New Note          {" "}
+            ➕ New Note          {" "}
           </button>
         </div>
         <div className={styles.closetContent}>
