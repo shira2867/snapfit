@@ -29,7 +29,7 @@ export default function Header() {
   };
 
   const handleGoWelcome = () => {
-    router.push("/welcome");
+    router.push("/profile");
   };
 
   return (
@@ -78,7 +78,7 @@ export default function Header() {
               Logout
             </button>
             <button className={styles.profileButton} onClick={handleGoWelcome}>
-              Go to Welcome
+              update profile
             </button>
           </div>
         )}
