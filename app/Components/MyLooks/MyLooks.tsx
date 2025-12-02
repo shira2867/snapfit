@@ -15,11 +15,14 @@ type MyLooksProps = {
 
 const COLOR_MAP: Record<string, [number, number, number]> = {
   Red: [255, 0, 0],
+  DarkRed: [139, 0, 0],
   Pink: [255, 192, 203],
   Orange: [255, 165, 0],
   Yellow: [255, 255, 0],
   Green: [0, 128, 0],
   Blue: [0, 0, 255],
+  DenimBlue: [21, 96, 189],      
+  LightDenim: [120, 160, 200],    
   Purple: [128, 0, 128],
   Brown: [165, 42, 42],
   Gray: [128, 128, 128],
