@@ -424,6 +424,7 @@
 
 .uploadedImage {
   max-width: 100%;
+
   max-height: 200px; 
   width: auto;       
   height: auto;      
@@ -432,7 +433,6 @@
   object-fit: scale-down; 
   display: block;
 }
-
 
 .analysisStatus {
   color: #555;
@@ -508,25 +508,25 @@
   width: 70%;
 }
 @media (max-width: 960px) {
- .container {
- position: static;
- }
+  .container {
+    position: static;
+  }
 
- .builderCard {
- padding: 1.25rem;
- }
+  .builderCard {
+    padding: 1.25rem;
+  }
 
- .panelHeader {
- flex-direction: column;
- }
+  .panelHeader {
+    flex-direction: column;
+  }
 
- .closeBtn {
- align-self: flex-end;
- }
+  .closeBtn {
+    align-self: flex-end;
+  }
 
- .lookArea {
- grid-template-columns: repeat(auto-fit, minmax(180px, 1fr)); 
- }
+  .lookArea {
+    grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+  }
 }
 @media (max-width: 700px) {
   .panelTitle,

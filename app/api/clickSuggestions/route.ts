@@ -3,6 +3,7 @@ import {
   addOrUpdateClick,
   getUserClicks,
 } from "@/services/server/clickSuggestions";
+
 import { cookies } from "next/headers";
 
 export async function GET(req: Request) {
@@ -30,6 +31,7 @@ export async function GET(req: Request) {
 
 export async function POST(req: Request) {
   try {
+
     const cookieStore = await cookies();
     const userId = cookieStore.get("userId")?.value;
 
@@ -42,6 +44,7 @@ export async function POST(req: Request) {
     const body = await req.json();
     const { category, color } = body;
     if ( !category || !color)
+
       return NextResponse.json(
         { message: "Missing parameters" },
         { status: 400 }
