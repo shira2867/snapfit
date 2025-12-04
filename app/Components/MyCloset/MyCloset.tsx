@@ -13,8 +13,6 @@ import DeleteHandleLooksModal from "../DeleteHandleLooksModal/DeleteHandleLooksM
 import pants from "../../../public/short_13387117.png";
 import { ClothingItem } from "@/types/clothTypes";
 import { FaTrash } from "react-icons/fa";
-import { FaTshirt, FaHatCowboy, FaUserTie, FaMale } from "react-icons/fa";
-import { GiClothes, GiLargeDress, GiSkirt } from "react-icons/gi";
 import { fetchClothes } from "@/services/client/closet";
 
 const COLOR_MAP: Record<string, [number, number, number]> = {
@@ -24,8 +22,10 @@ const COLOR_MAP: Record<string, [number, number, number]> = {
   Yellow: [255, 255, 0],
   Green: [0, 128, 0],
   Blue: [0, 0, 255],
+  LightBlue: [173, 216, 230],
+  Burgundy: [128, 0, 32],
   Purple: [128, 0, 128],
-  Brown: [165, 42, 42],
+  Brown: [121, 85, 61],
   Gray: [128, 128, 128],
   Black: [0, 0, 0],
   White: [255, 255, 255],
@@ -67,7 +67,7 @@ const CATEGORIES = [
   },
 ];
 
-const STYLES = ["casual", "sporty", "formal","party"];
+const STYLES = ["casual", "sporty", "formal", "party"];
 const SEASONS = ["Spring", "Summer", "Autumn", "Winter"];
 
 type MyClosetProps = {
@@ -83,7 +83,9 @@ const MyCloset: React.FC<MyClosetProps> = ({ userId, inspirationColors }) => {
   const [showFilters, setShowFilters] = useState(false);
   const filterPanelId = "closet-filter-panel";
 
-  const [selectedClothing, setSelectedClothing] = useState<string | null>(null);
+  const [selectedClothing, setSelectedClothing] = useState<ClothingItem | null>(
+    null
+  );
   const [modalOpen, setModalOpen] = useState(false);
 
   const { data: clothes = [], isLoading } = useQuery<ClothingItem[], Error>({
@@ -148,7 +150,7 @@ const MyCloset: React.FC<MyClosetProps> = ({ userId, inspirationColors }) => {
             </div>
             <button
               onClick={() => {
-                setSelectedClothing(item._id);
+                setSelectedClothing(item);
                 setModalOpen(true);
               }}
               className={styles.deleteButton}
@@ -223,14 +225,17 @@ const MyCloset: React.FC<MyClosetProps> = ({ userId, inspirationColors }) => {
           {inspirationColors.length > 0 && (
             <div className={styles.filterGroup}>
               <label className={styles.inspirationLabel}>
-                 Inspired Look Active:
+                Inspired Look Active:
                 <span style={{ fontWeight: "bold", color: "#5c1a1a" }}>
                   Filtering by {inspirationColors.length} colors!
                 </span>
               </label>
               <div className={styles.optionList}>
-                {inspirationColors.map((color) => (
-                  <span key={color} className={styles.inspirationColorTag}>
+                {inspirationColors.map((color, index) => (
+                  <span
+                    key={`${color}-${index}`}
+                    className={styles.inspirationColorTag}
+                  >
                     {color}
                   </span>
                 ))}
@@ -334,7 +339,7 @@ const MyCloset: React.FC<MyClosetProps> = ({ userId, inspirationColors }) => {
                   </div>
                   <button
                     onClick={() => {
-                      setSelectedClothing(item._id);
+                      setSelectedClothing(item);
                       setModalOpen(true);
                     }}
                     className={styles.deleteButton}
@@ -350,7 +355,8 @@ const MyCloset: React.FC<MyClosetProps> = ({ userId, inspirationColors }) => {
 
       {selectedClothing && (
         <DeleteHandleLooksModal
-          clothingId={selectedClothing}
+          clothingId={selectedClothing._id}
+          itemImageUrl={selectedClothing.imageUrl}
           open={modalOpen}
           onClose={() => {
             setModalOpen(false);
@@ -363,6 +369,7 @@ const MyCloset: React.FC<MyClosetProps> = ({ userId, inspirationColors }) => {
                 : "Item deleted."
             );
           }}
+          userId={userId}
         />
       )}
     </div>

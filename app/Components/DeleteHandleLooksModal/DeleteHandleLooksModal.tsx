@@ -11,8 +11,8 @@ type Props = {
   onComplete: (result: { updated: string[]; deleted: string[] }) => void;
   itemImageUrl?: string;
   itemCategory?: string;
+  userId: string;
 };
-
 
 type MutationResponse = {
   updatedLooks: string[];
@@ -38,6 +38,7 @@ const DeleteHandleLooksModal: React.FC<Props> = ({
   onComplete,
   itemImageUrl,
   itemCategory,
+  userId,
 }) => {
   const queryClient = useQueryClient();
   const [actions, setActions] = useState<Record<string, "update" | "delete">>(
@@ -79,6 +80,7 @@ const DeleteHandleLooksModal: React.FC<Props> = ({
         deleted: data.deletedLooks ?? [],
       });
       queryClient.invalidateQueries({ queryKey: ["looks", clothingId] });
+      queryClient.invalidateQueries({ queryKey: ["clothes", userId] });
       queryClient.invalidateQueries({ queryKey: ["closet"] });
       queryClient.invalidateQueries({ queryKey: ["myLooks"] });
       queryClient.invalidateQueries({ queryKey: ["clothing", clothingId] });
@@ -104,6 +106,7 @@ const DeleteHandleLooksModal: React.FC<Props> = ({
 
   const previewImageUrl = useMemo(() => {
     if (itemImageUrl) return itemImageUrl;
+    if (!looks || looks.length === 0) return itemImageUrl ?? null;
 
     const containingLook = looks.find((look) =>
       look.items.some((item) => item._id === clothingId)
@@ -116,7 +119,7 @@ const DeleteHandleLooksModal: React.FC<Props> = ({
     if (matchedItem?.imageUrl) return matchedItem.imageUrl;
 
     const firstItem = looks[0]?.items[0];
-    return firstItem?.imageUrl ?? null;
+    return firstItem?.imageUrl ?? itemImageUrl ?? null;
   }, [looks, clothingId, itemImageUrl]);
 
   return (
