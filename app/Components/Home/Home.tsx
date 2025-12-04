@@ -1,5 +1,5 @@
 "use client";
-import React, { useState, useEffect, useRef } from "react";
+import React, { useState, useEffect, useRef, useCallback } from "react";
 import { CldImage } from "next-cloudinary";
 import Image from "next/image";
 import styles from "./Home.module.css";
@@ -16,7 +16,6 @@ import WeatherWidget from "../WeatherWidget/WeatherWidget";
 import { StepProps } from "@/types/types";
 
 const heroImages = [
-  "slider_1_jcj9jm",
   "slider_5_z5v73p",
   "slider_6_fpl8b5",
   "slider_7_e93yg3",
@@ -57,26 +56,67 @@ function Step({ title, description, imageUrl, reverse }: StepProps) {
 }
 
 export default function HomePage() {
+  // const stepsData = [
+  //   {
+  //     title: "Step 1: Your Closet",
+  //     description:
+  //       "Quickly add all your favorite clothes into the app, and keep them organized in one place.",
+  //     imageUrl: "step_1_kgktj8",
+  //   },
+  //   {
+  //     title: "Step 2: Daily Outfits",
+  //     description:
+  //       "Expertly styled outfits every day, personalized for your weather and activities. Choose a recommended outfit, edit the ones you like, or build your own. You can even plan outfits.",
+  //     imageUrl: "step_2_b4kjht",
+  //   },
+  //   {
+  //     title: "Step 3: Love What You Wear",
+  //     description:
+  //       "Save time, clear the clutter, and stop spending money. Be free to be you. Sustainable fashion is about knowing your personal style so you can be more intentional.",
+  //     imageUrl: "step_3_hggv5q",
+  //   },
+  // ];
   const stepsData = [
     {
       title: "Step 1: Your Closet",
       description:
         "Quickly add all your favorite clothes into the app, and keep them organized in one place.",
-      imageUrl: "step_1_kgktj8",
+      // imageUrl: "step_1_kgktj8",
+      img: "/home/360dd27e6cd686b81e0c3a1ad5ebec8a_1000x.webp",
+
+      bullets: [
+        "Add clothes in 2 clicks",
+        "Organize by category or season",
+        "Snap photos for easy reference",
+      ],
     },
     {
       title: "Step 2: Daily Outfits",
       description:
-        "Expertly styled outfits every day, personalized for your weather and activities. Choose a recommended outfit, edit the ones you like, or build your own. You can even plan outfits.",
-      imageUrl: "step_2_b4kjht",
+        "Expertly styled outfits every day, personalized for your weather and activities. Choose a recommended outfit, edit the ones you like, or build your own.",
+      // imageUrl: "step_2_b4kjht",
+      img: "/home/as.jpg",
+      bullets: [
+        "Receive daily outfit suggestions",
+        "Customize with your favorites",
+        "Plan ahead for the week",
+      ],
     },
     {
       title: "Step 3: Love What You Wear",
       description:
         "Save time, clear the clutter, and stop spending money. Be free to be you. Sustainable fashion is about knowing your personal style so you can be more intentional.",
-      imageUrl: "step_3_hggv5q",
+      // imageUrl: "step_3_hggv5q",
+      img: "/home/aa.jpg",
+
+      bullets: [
+        "Feel confident every day",
+        "Stay sustainable & intentional",
+        "Simplify your wardrobe decisions",
+      ],
     },
   ];
+
   const user = useUserStore((state) => state.user);
 
   const [currentIndex, setCurrentIndex] = useState(0);
@@ -84,6 +124,8 @@ export default function HomePage() {
   const [isOpen, setIsOpen] = useState(false);
   const [activeIndex, setActiveIndex] = useState<number | null>(null);
   const rowRef = useRef<HTMLDivElement>(null);
+
+  const stepsSectionRef = useRef<HTMLElement | null>(null);
 
   const nextVideo = () => {
     if (activeIndex !== null)
@@ -94,6 +136,8 @@ export default function HomePage() {
     if (activeIndex !== null)
       setActiveIndex((prev) => (prev! - 1 + videos.length) % videos.length);
   };
+  // const getCloudinaryUrl = (id: string) =>
+  //   `https://res.cloudinary.com/dfrgvh4hf/image/upload/v123456/${id}.jpg`;
 
   useEffect(() => {
     const handleKey = (e: KeyboardEvent) => {
@@ -139,6 +183,13 @@ export default function HomePage() {
   const scrollRight = () => {
     rowRef.current?.scrollBy({ left: 300, behavior: "smooth" });
   };
+
+  const scrollToSteps = useCallback(() => {
+    stepsSectionRef.current?.scrollIntoView({
+      behavior: "smooth",
+      block: "start",
+    });
+  }, []);
   useEffect(() => {
     const interval = setInterval(() => {
       setCurrentIndex((prev) => (prev + 1) % heroImages.length);
@@ -152,10 +203,10 @@ export default function HomePage() {
   }, []);
 
   return (
-    <div className={styles.container}>
+    <div className={styles.page}>
       <Header />
 
-      {showPopup  && user&& (
+      {/* {showPopup && user && (
         <div className={styles.popupOverlay}>
           <div className={styles.popupContent}>
             <button
@@ -177,121 +228,282 @@ export default function HomePage() {
             </div>
           </div>
         </div>
-      )}
+      )} */}
 
-      <section className={styles.heroSection}>
-        <div className={styles.sliderWrapper}>
-          <CldImage
-            src={heroImages[currentIndex]}
-            width="1920"
-            height="1080"
-            alt={`Hero ${currentIndex + 1}`}
-            className={styles.heroImage}
-            crop={{ type: "fill" }}
-            gravity="auto"
-          />
-          <div className={styles.dots}>
-            {heroImages.map((_, index) => (
-              <span
-                key={index}
-                className={`${styles.dot} ${
-                  index === currentIndex ? styles.activeDot : ""
-                }`}
-                onClick={() => setCurrentIndex(index)}
-              />
-            ))}
-          </div>
-          <div className={styles.weatherBannerWrapper}>
-            <div className={styles.weatherContainer}>
-              {!isOpen ? (
-                <div className={styles.closed}>
-                  <h1 className={styles.title}>
-                    What’s the weather today? <br /> Style your outfit
-                    accordingly!
-                  </h1>
-                  <div className={styles.iconsRow}>
-                    <Image
-                      src={arrowDown}
-                      alt="down arrow"
-                      width={40}
-                      height={40}
-                      className={styles.bounce}
-                    />
-                  </div>
+      <main className={styles.content}>
+        <section className={styles.heroSection}>
+          <div className={styles.sliderWrapper}>
+            <CldImage
+              src={heroImages[currentIndex]}
+              width="1920"
+              height="1080"
+              alt={`Hero ${currentIndex + 1}`}
+              className={styles.heroImage}
+              crop={{ type: "fill" }}
+              gravity="auto"
+            />
+            <div className={styles.heroOverlay}>
+              <div className={styles.heroCopy}>
+                <p className={styles.heroEyebrow}>
+                  Personal styling for real life
+                </p>
+                <h1>Luxury wardrobe planning without the fuss</h1>
+                <p className={styles.heroSubcopy}>
+                  Organize your closet, browse curated outfits, and let the
+                  weather-ready stylist guide your mornings.
+                </p>
+                <div className={styles.heroActions}>
                   <button
-                    onClick={() => setIsOpen(true)}
-                    className={styles.weatherIconButton}
+                    type="button"
+                    className={styles.heroPrimary}
+                    onClick={scrollToSteps}
                   >
+                    Explore the experience
+                  </button>
+                  <button
+                    type="button"
+                    className={styles.heroSecondary}
+                    onClick={() => setIsOpen((prev) => !prev)}
+                    aria-pressed={isOpen}
+                  >
+                    Check today&apos;s weather{" "}
                     <Image
                       src={sunIcon}
                       alt="sun icon"
-                      width={60}
-                      height={60}
+                      width={56}
+                      height={56}
                       className={styles.bounceIcon}
                     />
                   </button>
                 </div>
-              ) : (
-                <div className={styles.opened}>
-                  <button
-                    className={styles.closeBtn}
-                    onClick={() => setIsOpen(false)}
-                  >
-                    ✕
-                  </button>
-                  <WeatherWidget />
+              </div>
+              {isOpen && (
+                <div className={styles.weatherBannerWrapper}>
+                  <div className={styles.weatherContainer}>
+                    <button
+                      className={styles.closeBtn}
+                      onClick={() => setIsOpen(false)}
+                      aria-label="Close weather widget"
+                    >
+                      ✕
+                    </button>
+                    <WeatherWidget />
+                  </div>
                 </div>
               )}
             </div>
+            <div className={styles.dots}>
+              {heroImages.map((_, index) => (
+                <span
+                  key={index}
+                  className={`${styles.dot} ${
+                    index === currentIndex ? styles.activeDot : ""
+                  }`}
+                  onClick={() => setCurrentIndex(index)}
+                />
+              ))}
+            </div>
           </div>
-        </div>
-      </section>
-      <section className={styles.stepsWrapper} id="steps">
-        {stepsData.map((step, index) => (
-          <Step
-            key={index}
-            title={step.title}
-            description={step.description}
-            imageUrl={step.imageUrl}
-            reverse={index % 2 !== 0}
-          />
-        ))}
-      </section>
+        </section>
 
-      <section className={styles.aboutSection} id="about">
-        <h2>About YourCloset</h2>
-        <p>
-          YourCloset helps you organize your wardrobe, create daily outfit
-          combinations, and make fashion fun and effortless. No more stress in
-          choosing what to wear – your perfect style is just a click away.
-        </p>
-      </section>
-
-      <div className={styles.videosWrapper}>
-        <h2 className={styles.title}>Daily Outfit Inspo </h2>
-        <div className={styles.carouselContainer}>
-          <button className={styles.arrowLeft} onClick={scrollLeft}>
-            ◀
-          </button>
-          <div className={styles.videosRow} ref={rowRef}>
-            {videos.map((video, index) => (
-              <video
+        {/* <section className={styles.stepsShell} id="steps" ref={stepsSectionRef}>
+          <div className={styles.sectionHeader}>
+            <p className={styles.sectionEyebrow}>How it works</p>
+            <h2>Our three-step styling ritual</h2>
+            <p>
+              Each feature feels handcrafted so you can glide from inspiration
+              to outfit planning without losing your signature taste.
+            </p>
+          </div>
+          <div className={styles.stepsWrapper}>
+            {stepsData.map((step, index) => (
+              <Step
                 key={index}
-                src={video}
-                muted
-                loop
-                className={styles.videoItem}
-                onMouseEnter={(e) => e.currentTarget.play()}
-                onMouseLeave={(e) => e.currentTarget.pause()}
-                onClick={() => setActiveIndex(index)}
+                title={step.title}
+                description={step.description}
+                imageUrl={step.imageUrl}
+                reverse={index % 2 !== 0}
               />
             ))}
           </div>
-          <button className={styles.arrowRight} onClick={scrollRight}>
-            ▶
-          </button>
-        </div>
-      </div>
+        </section> */}
+        {/* <section className={styles.stepsShell} id="steps">
+          <div className={styles.sectionHeader}>
+            <p className={styles.sectionEyebrow}>How it works</p>
+            <h2>Our three-step styling ritual</h2>
+            <p className={styles.stepsIntro}>
+              Glide from inspiration to outfit planning effortlessly. Each step
+              is designed to make your mornings luxurious and intentional.
+            </p>
+          </div>
+
+          <div className={styles.stepsWrapper}>
+            {stepsData.map((step, index) => (
+              <Step
+                key={index}
+                title={step.title}
+                description={step.description}
+                imageUrl={step.imageUrl}
+                reverse={index % 2 !== 0}
+                bullets={step.bullets}
+              />
+            ))}
+          </div>
+
+          <div className={styles.stepsCTA}>
+            <button className={styles.heroPrimary}>Start Styling</button>
+          </div>
+        </section> */}
+        <section className={styles.stepsShell} id="steps">
+          <div className={styles.sectionHeader}>
+            <p className={styles.sectionEyebrow}>How it works</p>
+            <h2>Our three-step styling ritual</h2>
+            <p className={styles.stepsIntro}>
+              Glide from inspiration to outfit planning effortlessly. Each step
+              is designed to make your mornings luxurious and intentional.
+            </p>
+          </div>
+
+          <div className={styles.stepsWrapper}>
+            {stepsData.map((step, index) => (
+              <div
+                key={index}
+                className={`${styles.stepSection} ${
+                  index % 2 !== 0 ? styles.reverse : ""
+                }`}
+              >
+                <div className={styles.stepImageWrapper}>
+                  <img
+                    // src={getCloudinaryUrl(step.imageUrl)}
+                    src={step.img}
+                    className={styles.stepImageWide}
+                  />
+                </div>
+                <div className={styles.stepContent}>
+                  <h3>{step.title}</h3>
+                  <p>{step.description}</p>
+                  {step.bullets && (
+                    <ul className={styles.stepBullets}>
+                      {step.bullets.map((bullet, idx) => (
+                        <li key={idx}>{bullet}</li>
+                      ))}
+                    </ul>
+                  )}
+                </div>
+              </div>
+            ))}
+          </div>
+
+          <div className={styles.stepsCTA}>
+            <button className={styles.heroPrimary}>Start Styling</button>
+          </div>
+        </section>
+
+        {/* <section className={styles.aboutSection} id="about">
+          <div className={styles.sectionHeader}>
+            <p className={styles.sectionEyebrow}>About</p>
+            <h2>Effortless luxury every morning</h2>
+            <p>
+              YourCloset curates what you own, suggests weather-ready looks, and
+              keeps inspiration close so every outfit feels intentional.
+            </p>
+          </div>
+          <div className={styles.aboutCard}>
+            <p>
+              Organize garments, drag pieces into new combinations, and let our
+              styling guidance do the hard work. Stay sustainable, feel
+              polished, and reclaim your time.
+            </p>
+          </div>
+        </section> */}
+        <section className={styles.testimonialsSection}>
+          <div className={styles.sectionHeader}>
+            <p className={styles.sectionEyebrow}>What people say</p>
+            <h2>Real experiences from real users</h2>
+            <p>YourCloset is already transforming morning routines.</p>
+          </div>
+
+          <div className={styles.testimonialsGrid}>
+            {[
+              {
+                name: "Sarah M.",
+                text: "This app changed the way I choose outfits. I save so much time and feel more confident every day.",
+                stars: 5,
+                img: "/people/premium_photo-1688572454849-4348982edf7d.avif",
+              },
+              {
+                name: "Emily R.",
+                text: "Never realized how many clothes I had until I organized them here. The daily looks are spot-on!",
+                stars: 5,
+                img: "/people/images (1).jpg",
+              },
+              {
+                name: "Julia K.",
+                text: "Feels like having my own stylist. Simple, elegant, and genuinely useful.",
+                stars: 4,
+                img: "/people/images.jpg",
+              },
+            ].map((item, index) => (
+              <div key={index} className={styles.testimonialCard}>
+                <img
+                  src={item.img}
+                  alt={item.name}
+                  className={styles.testimonialAvatar}
+                />
+                <p className={styles.testimonialText}>"{item.text}"</p>
+                <div className={styles.starsRow}>
+                  {Array.from({ length: item.stars }).map((_, i) => (
+                    <FiStar key={i} className={styles.starIcon} />
+                  ))}
+                </div>
+                <h4 className={styles.testimonialName}>– {item.name}</h4>
+              </div>
+            ))}
+          </div>
+        </section>
+
+        <section className={styles.videosWrapper}>
+          <div className={styles.sectionHeader}>
+            <p className={styles.sectionEyebrow}>Inspiration</p>
+            <h2>Daily outfit films</h2>
+            <p>
+              Tap to expand full screen and explore seasonal looks captured by
+              our community.
+            </p>
+          </div>
+          <div className={styles.carouselContainer}>
+            <button
+              className={styles.arrowLeft}
+              onClick={scrollLeft}
+              aria-label="Scroll looks left"
+            >
+              ◀
+            </button>
+            <div className={styles.videosRow} ref={rowRef}>
+              {videos.map((video, index) => (
+                <video
+                  key={index}
+                  src={video}
+                  muted
+                  loop
+                  playsInline
+                  className={styles.videoItem}
+                  onMouseEnter={(e) => e.currentTarget.play()}
+                  onMouseLeave={(e) => e.currentTarget.pause()}
+                  onClick={() => setActiveIndex(index)}
+                />
+              ))}
+            </div>
+            <button
+              className={styles.arrowRight}
+              onClick={scrollRight}
+              aria-label="Scroll looks right"
+            >
+              ▶
+            </button>
+          </div>
+        </section>
+      </main>
 
       {activeIndex !== null && (
         <div className={styles.overlay} onClick={handleOverlayClick}>
@@ -313,6 +525,3 @@ export default function HomePage() {
     </div>
   );
 }
-
-
-
