@@ -1,3 +1,4 @@
+
 "use client";
 import React, { useState, useEffect } from "react";
 import styles from "./LookCard.module.css";
@@ -11,7 +12,6 @@ import { useUserStore } from "@/store/userStore";
 type LookCardProps = {
   items: ClothingItem[];
   lookId?: string;
-  profileImage?: string;
 };
 
 const LookCard: React.FC<LookCardProps> = ({ items, lookId }) => {
@@ -27,8 +27,7 @@ const LookCard: React.FC<LookCardProps> = ({ items, lookId }) => {
   const BASE_URL = globalThis?.location?.origin ?? "";
   const lookUrl = `${BASE_URL}/sharelookpersonal/${lookId}`;
 
-  if (!userId) console.warn("User ID is null! Sharing disabled.");
-
+  // Fetch current share status
   const { data: shareStatus } = useQuery({
     queryKey: ["shareLookStatus", lookId],
     queryFn: async () => {
@@ -48,10 +47,7 @@ const LookCard: React.FC<LookCardProps> = ({ items, lookId }) => {
   }, [shareStatus]);
 
   const openPopup = (url: string) => {
-    if (
-      typeof globalThis === "undefined" ||
-      typeof globalThis.open !== "function"
-    )
+    if (typeof globalThis === "undefined" || typeof globalThis.open !== "function")
       return;
     globalThis.open(url, "_blank", "width=600,height=500,noopener,noreferrer");
   };
@@ -66,10 +62,12 @@ const LookCard: React.FC<LookCardProps> = ({ items, lookId }) => {
     e.stopPropagation();
     openPopup(`mailto:?subject=Check out this look&body=${lookUrl}`);
   };
+
   const shareWhatsApp = (e: React.MouseEvent) => {
     e.stopPropagation();
     openPopup(`https://wa.me/?text=${encodeURIComponent(lookUrl)}`);
   };
+
   const shareFacebook = (e: React.MouseEvent) => {
     e.stopPropagation();
     openPopup(
@@ -94,9 +92,7 @@ const LookCard: React.FC<LookCardProps> = ({ items, lookId }) => {
     onSuccess: (data) => {
       setIsShared(true);
       setSharedLookId(data._id);
-      queryClient.invalidateQueries({
-        queryKey: ["shareLookStatus", lookId, userId],
-      });
+      queryClient.invalidateQueries({ queryKey: ["shareLookStatus", lookId] });
       showToast("Look added to StyleFeed!", "success");
     },
   });
@@ -114,9 +110,7 @@ const LookCard: React.FC<LookCardProps> = ({ items, lookId }) => {
     onSuccess: () => {
       setIsShared(false);
       setSharedLookId(null);
-      queryClient.invalidateQueries({
-        queryKey: ["shareLookStatus", lookId, userId],
-      });
+      queryClient.invalidateQueries({ queryKey: ["shareLookStatus", lookId] });
       showToast("Look removed from StyleFeed", "success");
     },
     onError: (err: any) =>
@@ -143,7 +137,6 @@ const LookCard: React.FC<LookCardProps> = ({ items, lookId }) => {
 
   if (isDeleted) return null;
 
-  const shareStateLabel = isShared ? "Shared to StyleFeed" : "Private look";
   const closePreview = () => setIsPopupOpen(false);
   const togglePreview = () => setIsPopupOpen(true);
 
@@ -153,15 +146,13 @@ const LookCard: React.FC<LookCardProps> = ({ items, lookId }) => {
         <div className={styles.cardSummary}>
           <p className={styles.cardEyebrow}>Look</p>
           <h3 className={styles.cardTitle}>{items.length} curated items</h3>
-          <p className={styles.cardHelper}>
-            Tap any piece for a full-screen preview.
-          </p>
+          <p className={styles.cardHelper}>Tap any piece for a full-screen preview.</p>
         </div>
         <span
           className={`${styles.badge} ${isShared ? styles.badgeSuccess : ""}`}
           aria-live="polite"
         >
-          {shareStateLabel}
+          {isShared ? "Shared to StyleFeed" : "Private look"}
         </span>
       </header>
 
@@ -191,41 +182,20 @@ const LookCard: React.FC<LookCardProps> = ({ items, lookId }) => {
         <div>
           <p className={styles.shareLabel}>Share or manage look</p>
           <p className={styles.shareDescription}>
-            Copy a link or push to StyleFeed. Removing will hide it from
-            followers.
+            Copy a link or push to StyleFeed. Removing will hide it from followers.
           </p>
         </div>
         <div className={styles.shareButtons} aria-label="Share look options">
-          <button
-            type="button"
-            className={styles.shareButton}
-            onClick={shareCopyLink}
-            title="Copy share link"
-          >
+          <button type="button" className={styles.shareButton} onClick={shareCopyLink} title="Copy share link">
             <FiShare2 size={18} />
           </button>
-          <button
-            type="button"
-            className={styles.shareButton}
-            onClick={shareEmail}
-            title="Share via email"
-          >
+          <button type="button" className={styles.shareButton} onClick={shareEmail} title="Share via email">
             <FiMail size={18} />
           </button>
-          <button
-            type="button"
-            className={styles.shareButton}
-            onClick={shareWhatsApp}
-            title="Share via WhatsApp"
-          >
+          <button type="button" className={styles.shareButton} onClick={shareWhatsApp} title="Share via WhatsApp">
             <FiMessageCircle size={18} />
           </button>
-          <button
-            type="button"
-            className={styles.shareButton}
-            onClick={shareFacebook}
-            title="Share on Facebook"
-          >
+          <button type="button" className={styles.shareButton} onClick={shareFacebook} title="Share on Facebook">
             <FaFacebookF size={18} />
           </button>
 
@@ -233,10 +203,7 @@ const LookCard: React.FC<LookCardProps> = ({ items, lookId }) => {
             <button
               type="button"
               className={`${styles.shareButton} ${styles.styleFeed}`}
-              onClick={(e) => {
-                e.stopPropagation();
-                removeLookMutation.mutate();
-              }}
+              onClick={(e) => { e.stopPropagation(); removeLookMutation.mutate(); }}
               title="Remove from StyleFeed"
             >
               ✖
@@ -245,10 +212,7 @@ const LookCard: React.FC<LookCardProps> = ({ items, lookId }) => {
             <button
               type="button"
               className={`${styles.shareButton} ${styles.styleFeed}`}
-              onClick={(e) => {
-                e.stopPropagation();
-                addLookMutation.mutate();
-              }}
+              onClick={(e) => { e.stopPropagation(); addLookMutation.mutate(); }}
               title="Share to StyleFeed"
             >
               <FiUpload size={18} />
@@ -270,45 +234,20 @@ const LookCard: React.FC<LookCardProps> = ({ items, lookId }) => {
 
       {isPopupOpen && (
         <div className={styles.modalBackdrop}>
-          <button
-            className={styles.backdropDismiss}
-            onClick={closePreview}
-            tabIndex={-1}
-          />
-          <dialog
-            open
-            className={styles.modalContentLarge}
-            onCancel={(e) => {
-              e.preventDefault();
-              closePreview();
-            }}
-          >
-            <button
-              type="button"
-              className={styles.closeButton}
-              onClick={closePreview}
-            >
+          <button className={styles.backdropDismiss} onClick={closePreview} tabIndex={-1} />
+          <dialog open className={styles.modalContentLarge} onCancel={(e) => { e.preventDefault(); closePreview(); }}>
+            <button type="button" className={styles.closeButton} onClick={closePreview}>
               <FaTimes />
             </button>
             <header className={styles.modalHeader}>
               <p className={styles.cardEyebrow}>Full look</p>
-              <h4 className={styles.modalTitle}>
-                {items.length} curated items
-              </h4>
-              <p className={styles.modalDescription}>
-                Scroll through every piece in a larger canvas to examine
-                textures and fit.
-              </p>
+              <h4 className={styles.modalTitle}>{items.length} curated items</h4>
+              <p className={styles.modalDescription}>Scroll through every piece in a larger canvas to examine textures and fit.</p>
             </header>
             <div className={styles.gridLarge}>
               {items.map((item) => (
                 <div key={item._id} className={styles.itemWrapperLarge}>
-                  <img
-                    src={item.imageUrl}
-                    alt={item.category}
-                    className={styles.imageLarge}
-                    loading="lazy"
-                  />
+                  <img src={item.imageUrl} alt={item.category} className={styles.imageLarge} loading="lazy" />
                 </div>
               ))}
             </div>
