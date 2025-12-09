@@ -6,6 +6,7 @@ import Image from "next/image";
 import {
   signInWithPopup,
   signInWithEmailAndPassword,
+  sendPasswordResetEmail,
   User,
 } from "firebase/auth";
 import { useUserStore } from "@/store/userStore";
@@ -15,14 +16,17 @@ import { FormData } from "../../../types/userTypes";
 import { auth, provider } from "@/app/firebase/config";
 
 export default function LoginForm() {
-  const { register, handleSubmit } = useForm<FormData>();
+  const { register, handleSubmit, getValues } = useForm<FormData>();
   const router = useRouter();
   const setUser = useUserStore((state) => state.setUser);
   const setUserId = useUserStore((state) => state.setUserId);
+
   const [errorMessage, setErrorMessage] = useState("");
+  const [successMessage, setSuccessMessage] = useState("");
+  const [isSendingReset, setIsSendingReset] = useState(false);
 
   const loginMutation = useMutation<
-    { firebaseUser: User; dbUser: any },      // 👈 במקום dbData
+    { firebaseUser: User; dbUser: any },
     any,
     FormData & { method: "google" | "email" }
   >({
@@ -37,7 +41,7 @@ export default function LoginForm() {
         if (!dbData.exists)
           throw new Error("User not found. Please register first.");
 
-        const dbUser = dbData.user;          // 👈 לוקחים את user מה-API
+        const dbUser = dbData.user;
         return { firebaseUser, dbUser };
       } else {
         const res = await fetch(`/api/user?email=${data.email}`);
@@ -51,14 +55,14 @@ export default function LoginForm() {
           data.password!
         );
 
-        const dbUser = dbData.user;          // 👈 גם כאן
+        const dbUser = dbData.user;
         return { firebaseUser: userCredential.user, dbUser };
       }
     },
 
     onSuccess: async ({ firebaseUser, dbUser }) => {
       setUser({
-        name: dbUser?.name ?? null,                               
+        name: dbUser?.name ?? null,
         email: firebaseUser.email ?? null,
         profileImage: dbUser?.profileImage ?? firebaseUser.photoURL ?? null,
         gender: (dbUser?.gender as "male" | "female" | null) ?? null,
@@ -98,12 +102,37 @@ export default function LoginForm() {
 
   const handleGoogleLogin = () => {
     setErrorMessage("");
+    setSuccessMessage("");
     loginMutation.mutate({ method: "google", email: "", password: "" });
   };
 
   const handleEmailLogin = (data: FormData) => {
     setErrorMessage("");
+    setSuccessMessage("");
     loginMutation.mutate({ ...data, method: "email" });
+  };
+
+  const handleForgotPassword = async () => {
+    setErrorMessage("");
+    setSuccessMessage("");
+
+    const email = getValues("email");
+
+    if (!email) {
+      setErrorMessage("Please enter your email first.");
+      return;
+    }
+
+    try {
+      setIsSendingReset(true);
+      await sendPasswordResetEmail(auth, email);
+      setSuccessMessage("Password reset email sent. Check your inbox.");
+    } catch (err) {
+      console.error(err);
+      setErrorMessage("Failed to send reset email.");
+    } finally {
+      setIsSendingReset(false);
+    }
   };
 
   return (
@@ -147,7 +176,18 @@ export default function LoginForm() {
             className={styles.input}
           />
 
+          {/* שכחתי סיסמה */}
+          <button
+            type="button"
+            onClick={handleForgotPassword}
+            className={styles.forgotPasswordButton}
+            disabled={isSendingReset}
+          >
+            {isSendingReset ? "Sending reset link..." : "Forgot your password?"}
+          </button>
+
           {errorMessage && <p className={styles.error}>{errorMessage}</p>}
+          {successMessage && <p className={styles.success}>{successMessage}</p>}
 
           <button
             type="submit"
