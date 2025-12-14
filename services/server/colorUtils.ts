@@ -141,6 +141,7 @@ export function isPurpleShadeRGB([r, g, b]: RGB): boolean {
   return isLightPurple || isMediumPurple || isDarkPurple;
 }
 
+
 export function closestColorLAB(rgb: RGB): string {
   const lab = chroma(rgb).lab();
   const L = lab[0];
@@ -196,9 +197,9 @@ const purplrShades = ["Purple", "LightPurple", "Lavender"];
   return closest;
 }
 
+
 export function getDominantColorsKMeans(
   img: HTMLImageElement,
-  size = 250,
   topN = 4
 ): RGB[] {
   const canvas = document.createElement("canvas");
@@ -246,6 +247,7 @@ export function getDominantColorsKMeans(
   const { centroids } = kmeans(pixels, topN, {});
   return centroids.map(c => c.map(Math.round) as RGB);
 }
+
 
 export function getDominantColorsFromCenter(
   img: HTMLImageElement,

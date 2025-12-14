@@ -109,6 +109,7 @@ const NewLook: FC<NewLookProps> = ({
     },
   });
 
+
   const handleDrop: React.DragEventHandler<HTMLDivElement> = (event) => {
     event.preventDefault();
     const data = event.dataTransfer.getData("application/json");
