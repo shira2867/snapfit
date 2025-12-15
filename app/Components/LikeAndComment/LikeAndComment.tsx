@@ -6,17 +6,15 @@ import axios from "axios";
 import styles from "./LikeAndComment.module.css";
 import Image from "next/image";
 
-// --- ממשקי טיפוסים לדוגמה ---
-interface Comment {
+export interface Comment {
   id: string;
   userId: string;
   userName: string;
   text: string;
-  profileImage?: string;
-  date: string;
+  profileImage?: string | null;
+  createdAt: Date; 
 }
 
-// --- LikeButton Component (ללא שינוי) ---
 export function LikeButton({
   lookId,
   userId,
@@ -30,10 +28,7 @@ export function LikeButton({
 }) {
   const handleLike = async (e: React.MouseEvent) => {
     e.stopPropagation();
-    if (!userId) {
-      console.error("Missing userId");
-      return;
-    }
+    if (!userId) return;
 
     try {
       const res = await axios.post(`/api/sharelook/${lookId}/like`, { userId });
@@ -57,7 +52,6 @@ export function LikeButton({
   );
 }
 
-// --- CommentForm Component (מתוקן - כפתור שליחה) ---
 export function CommentForm({
   lookId,
   userId,
@@ -68,7 +62,7 @@ export function CommentForm({
   lookId: string;
   userId: string;
   userName: string;
-  profileImage?: string;
+  profileImage?: string | null;
   onNewComment: (comments: Comment[]) => void;
 }) {
   const [text, setText] = useState("");
@@ -85,7 +79,10 @@ export function CommentForm({
   const fetchComments = async () => {
     try {
       const res = await axios.get(`/api/sharelook/${lookId}/comment`);
-      const comments: Comment[] = res.data.comments || [];
+      const comments: Comment[] = (res.data.comments || []).map((c: any) => ({
+        ...c,
+        createdAt: new Date(c.createdAt || c.date || Date.now()),
+      }));
       onNewComment(comments);
     } catch (err) {
       console.error("Failed to fetch comments:", err);
@@ -100,14 +97,13 @@ export function CommentForm({
     try {
       await axios.post(`/api/sharelook/${lookId}/comment`, {
         text: text.trim(),
-        userId: userId,
-        userName: userName,
+        userId,
+        userName,
       });
 
       await fetchComments();
-      
       setText("");
-      setShowEmojiPicker(false); 
+      setShowEmojiPicker(false);
     } catch (err) {
       console.error("Failed to add comment:", err);
     } finally {
@@ -115,21 +111,18 @@ export function CommentForm({
     }
   };
 
-  const addEmoji = (emoji: string) => {
-    setText((prev) => prev + emoji);
-  };
+  const addEmoji = (emoji: string) => setText((prev) => prev + emoji);
 
   const handleKeyDown = (e: KeyboardEvent<HTMLInputElement>) => {
     if (e.key === "Enter" && !e.shiftKey) {
       e.preventDefault();
       handleSubmit(e as unknown as React.FormEvent);
-      setShowEmojiPicker(false); 
+      setShowEmojiPicker(false);
     }
   };
 
   return (
     <form onSubmit={handleSubmit} className={styles.commentForm}>
-      {/* 1. Avatar / Fallback */}
       {profileImage ? (
         <Image
           src={profileImage}
@@ -137,10 +130,7 @@ export function CommentForm({
           width={32}
           height={32}
           className={styles.commentAvatar}
-          onError={(e) => {
-            const target = e.target as HTMLImageElement;
-            target.src = "/default-avatar.png"; 
-          }}
+          onError={(e) => ((e.target as HTMLImageElement).src = "/default-avatar.png")}
         />
       ) : (
         <div className={styles.commentAvatarFallback}>
@@ -148,7 +138,6 @@ export function CommentForm({
         </div>
       )}
 
-      {/* 2. Input and Emoji Wrapper (Flex: 1) */}
       <div className={styles.commentInputWrapper}>
         <input
           value={text}
@@ -169,7 +158,6 @@ export function CommentForm({
           😀
         </button>
 
-        {/* 3. Emoji Picker */}
         {showEmojiPicker && (
           <div className={styles.emojiPicker}>
             <div className={styles.emojiCategories}>
@@ -204,15 +192,11 @@ export function CommentForm({
 
       <button
         type="submit"
-        className={styles.commentSendIcon} 
+        className={styles.commentSendIcon}
         disabled={loading || !text.trim()}
         aria-label={loading ? "Sending comment" : "Send comment"}
       >
-        {loading ? (
-          <div className={styles.spinner} />
-        ) : (
-          "➤" 
-        )}
+        {loading ? <div className={styles.spinner} /> : "➤"}
       </button>
     </form>
   );
