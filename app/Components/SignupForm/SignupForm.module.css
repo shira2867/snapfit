@@ -2,6 +2,8 @@
 @import url("https://fonts.googleapis.com/css2?family=Playfair+Display:wght@700&display=swap");
 @import url("https://fonts.googleapis.com/css2?family=Poppins:wght@400;500&display=swap");
 
+
+
 .container {
   display: flex;
   justify-content: center;
@@ -13,7 +15,7 @@
 .signupPage {
   display: flex;
   flex-direction: column;
-  justify-content: center;
+  justify-content: center; 
   align-items: center;
   height: 100vh;
   width: 100%;
@@ -31,6 +33,7 @@
 
 .localHeader img {
   height: auto;
+  width: 210px; 
 }
 
 .form {
@@ -177,9 +180,56 @@
   margin-top: 2rem;
 }
 
+
+@media (max-width: 768px) {
+  .localHeader {
+    top: 20px;
+    left: 20px; 
+  }
+  .localHeader img {
+    width: 150px; 
+  }
+  .form {
+    margin-top: 0; 
+  }
+  .container {
+    padding: 30px; 
+  }
+}
+
 @media (max-width: 480px) {
+  .signupPage {
+    justify-content: flex-start; 
+    padding-top: 40px; 
+    min-height: 100vh;
+    height: auto; 
+    
+  }
+
+  .localHeader {
+    position: static; 
+    
+    text-align: center; 
+    margin: 0 0 20px 0; 
+    width: 100%;
+    top: auto;
+    left: auto;
+  }
+
+  .localHeader img {
+    width: 100px; 
+  }
+
+  .container {
+    min-height: unset; 
+    align-items: flex-start; 
+    padding: 0 20px;
+    width: 100%;
+  }
+
   .form {
     padding: 1.5rem;
+    max-width: 100%; 
   }
   .form h2 {
     font-size: 1.5rem;
@@ -192,21 +242,5 @@
   .googleButton {
     padding: 0.6rem;
     font-size: 0.95rem;
-  }
-  .logo {
-    width: 100px;
-    margin-bottom: 15px;
-  }
-}
-@media (max-width: 768px) {
-  .localHeader img {
-    width: 200px;
-    margin-left: 100px;
-  }
-  .form {
-    margin-top: 90px;
-  }
-  .container {
-    padding: 50px;
   }
 }

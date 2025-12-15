@@ -2,10 +2,11 @@
 @import url("https://fonts.googleapis.com/css2?family=Playfair+Display:wght@700&display=swap");
 @import url("https://fonts.googleapis.com/css2?family=Poppins:wght@400;500&display=swap");
 
+
+
 .loginPage {
   display: flex;
   flex-direction: column;
-  justify-content: center;
   align-items: center;
   height: 100vh;
   width: 100%;
@@ -23,13 +24,14 @@
 
 .localHeader img {
   height: auto;
+  width: 210px; 
 }
 
 .container {
   display: flex;
   justify-content: center;
   align-items: center;
-  min-height: 100vh;
+  min-height: 100vh; 
   padding: 20px;
 }
 
@@ -158,7 +160,7 @@
   border: none;
   padding: 0.5rem 0;
   width: 100%;
-  text-align: center;    
+  text-align: center;
   font-size: 0.9rem;
   text-decoration: underline;
   cursor: pointer;
@@ -175,9 +177,50 @@
 }
 
 
+@media (max-width: 768px) {
+  .localHeader {
+    top: 20px;
+    left: 20px; 
+  }
+  .localHeader img {
+    width: 150px; 
+  }
+  .container {
+    padding: 30px;
+  }
+}
+
 @media (max-width: 480px) {
+  .loginPage {
+    justify-content: flex-start; 
+    padding-top: 40px;
+    min-height: 100vh;
+    height: auto; 
+  }
+
+  .localHeader {
+    position: static;
+    text-align: center; 
+    margin: 0 0 20px 0; 
+    width: 100%;
+    top: auto;
+    left: auto;
+  }
+
+  .localHeader img {
+    width: 120px; 
+  }
+
+  .container {
+    min-height: unset; 
+    align-items: flex-start; 
+    padding: 0 20px;
+    width: 100%;
+  }
+
   .form {
     padding: 1.5rem;
+    max-width: 100%; 
   }
   .form h2 {
     font-size: 1.5rem;
@@ -190,17 +233,5 @@
   .googleButton {
     padding: 0.6rem;
     font-size: 0.95rem;
-  }
-  .localHeader img {
-    width: 100px;
-  }
-}
-@media (max-width: 768px) {
-  .localHeader img {
-    width: 200px;
-    margin-left: 100px;
-  }
-  .container {
-    padding: 50px;
   }
 }
