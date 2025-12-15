@@ -16,10 +16,9 @@ export function useGoogleAuth() {
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
 
-  const readNextFromUrl = () => {
+  const getNextFromUrl = () => {
     if (typeof window === "undefined") return null;
-    const sp = new URLSearchParams(window.location.search);
-    return sp.get("next");
+    return new URLSearchParams(window.location.search).get("next");
   };
 
   const signInWithGoogle = async (nextParam?: string | null) => {
@@ -27,17 +26,14 @@ export function useGoogleAuth() {
     setError(null);
 
     try {
-      // 1) Firebase popup
+      // 1) Google sign-in
       const result = await signInWithPopup(auth, provider);
       const firebaseUser = result.user;
 
-      if (!firebaseUser.email) {
-        throw new Error("Google account has no email.");
-      }
-
       const email = firebaseUser.email;
+      if (!email) throw new Error("Google account has no email.");
 
-      // 2) Upsert user in DB
+      // 2) Sync user with DB (upsert)
       const registerRes = await fetch("/api/user/register", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
@@ -52,29 +48,23 @@ export function useGoogleAuth() {
         throw new Error("Failed to sync user with server.");
       }
 
-      const registerData = await registerRes.json();
-      const isExistingUser = !!registerData.exists;
-
-      // 3) Load full user data (including id)
+      // 3) Fetch full DB user (includes id)
       const userRes = await fetch(`/api/user?email=${encodeURIComponent(email)}`);
       if (!userRes.ok) throw new Error("Failed to load user data.");
 
-      const userData = await userRes.json();
-      const dbUser = userData.user;
+      const { user: dbUser } = await userRes.json();
 
       // 4) Save to Zustand
       setUser({
         name: dbUser?.name ?? firebaseUser.displayName ?? null,
-        email: dbUser?.email ?? firebaseUser.email ?? null,
+        email: dbUser?.email ?? email,
         profileImage: dbUser?.profileImage ?? firebaseUser.photoURL ?? null,
         gender: (dbUser?.gender as "male" | "female" | null) ?? null,
       });
 
-      if (dbUser?.id) {
-        setUserId(dbUser.id);
-      }
+      if (dbUser?.id) setUserId(dbUser.id);
 
-      // 5) Set auth cookie (MUST succeed)
+      // 5) Set auth cookie (must succeed so middleware won't bounce)
       const idToken = await firebaseUser.getIdToken();
       const cookieRes = await fetch("/api/auth/set-cookie", {
         method: "POST",
@@ -86,28 +76,19 @@ export function useGoogleAuth() {
         throw new Error("Failed to set authentication cookie.");
       }
 
-      // 6) Redirect: prefer next flow
-      const next = nextParam ?? readNextFromUrl() ?? null;
+      // 6) Redirect
+      const next = nextParam ?? getNextFromUrl();
+      const isProfileComplete = !!dbUser?.name && !!dbUser?.gender;
 
       if (next) {
         router.replace(next);
+      } else if (!isProfileComplete) {
+        router.replace("/complete-profile");
       } else {
-        // legacy fallback (optional)
-        const redirectLookId = localStorage.getItem("redirectLookId");
-        if (redirectLookId) {
-          localStorage.removeItem("redirectLookId");
-          router.replace(`/sharelookpersonal/${redirectLookId}`);
-        } else if (!isExistingUser) {
-          router.replace("/complete-profile");
-        } else {
-          router.replace("/home");
-        }
+        router.replace("/home");
       }
 
-      showToast(
-        isExistingUser ? "Welcome back!" : "Account created successfully",
-        "success"
-      );
+      showToast(isProfileComplete ? "Welcome back!" : "Account created successfully", "success");
     } catch (err: any) {
       console.error(err);
       const msg = err?.message || "Google login failed";
