@@ -78,6 +78,8 @@ export default function LoginForm() {
       if (!cookieRes.ok) {
         throw new Error("Failed to set authentication cookie.");
       }
+      console.log("NEXT RAW:", searchParams.get("next"));
+      console.log("NEXT USED:", nextPath);
 
       // ✅ NEW: prefer nextPath from query
       if (nextPath) {
