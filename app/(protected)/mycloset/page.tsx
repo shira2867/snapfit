@@ -58,6 +58,7 @@ export default function ShowMyCloset() {
           userId={userId}
           inspirationColors={inspirationColors}
           isMobile={isMobile}
+
         />
       </div>
 
