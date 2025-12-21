@@ -39,22 +39,6 @@ export const COLOR_MAP: Record<string, RGB> = {
   Turquoise: [64, 224, 208],
 };
 
-export function isPinkRGB([r, g, b]: RGB): boolean {
-  const [h, s, l] = chroma([r, g, b]).hsl();
-
-  return (
-    r > 180 &&
-    b < r &&
-    g < r &&
-    Math.abs(g - b) < 30 &&
-    s > 0.15 &&
-    l > 0.6 &&
-    (h < 20 || h > 330)
-  );
-}
-
-
-
 export function isGrayRGB([r, g, b]: RGB): boolean {
   return Math.max(r, g, b) - Math.min(r, g, b) < 20 && r > 50 && r < 200;
 }
@@ -82,7 +66,9 @@ export function isCyanRGB([r, g, b]: RGB): boolean {
   return b > 150 && g > 120 && r < 100;
 }
 
-
+export function isPinkRGB([r, g, b]: RGB): boolean {
+  return r > 200 && g < 150 && b < 180;
+}
 
 export function isDenimRGB([r, g, b]: RGB): boolean {
   return (
@@ -104,36 +90,18 @@ export function isRedRGB([r, g, b]: RGB): boolean {
 }
 
 export function isPurpleShadeRGB([r, g, b]: RGB): boolean {
-  const color = chroma([r, g, b]);
-  const [L] = color.lab();
-  const [h, s] = color.hsl();
+  const [L] = chroma([r, g, b]).lab();
 
-  // בהיר מדי → לבן / ורוד / לבנדר
   if (L > 90) return false;
 
-  // ירוק דומיננטי ≠ סגול
   if (g > r || g > b) return false;
 
-  // חסימת ורודים בהירים (dusty / blush)
-  if (
-    r > 180 &&
-    g > 160 &&
-    b > 160 &&
-    Math.abs(g - b) < 30
-  ) {
-    return false;
-  }
-
-  // חייב להיות באמת באזור הסגול
-  if (h === undefined || h < 260 || h > 320) return false;
+  const diffRB = Math.abs(r - b);
 
   return (
-    s > 0.2 &&
-    (
-      (L > 65 && r > 130 && b > 130 && Math.abs(r - b) < 60) ||
-      (L >= 35 && L <= 65 && r > 80 && b > 80 && Math.abs(r - b) < 70) ||
-      (L < 35 && r > 50 && b > 50 && Math.abs(r - b) < 60)
-    )
+    (L > 65 && r < 180 && b > 120 && diffRB < 60) ||
+    (L >= 35 && L <= 65 && r < 150 && b > 80 && diffRB < 70) ||
+    (L < 35 && r < 100 && b > 40 && diffRB < 50)
   );
 }
 
@@ -310,6 +278,7 @@ export function getDominantColorsFromCenter(
 
 export function getDominantColorsKMeansCenter(
   img: HTMLImageElement,
+  size = 200,
   topN = 4
 ): RGB[] {
   const canvas = document.createElement("canvas");
@@ -320,42 +289,36 @@ export function getDominantColorsKMeansCenter(
 
   ctx.drawImage(img, 0, 0);
 
+  const centerX = Math.floor(img.width / 2);
+  const centerY = Math.floor(img.height / 2);
+
   const pixels: RGB[] = [];
+  const fallbackPixels: RGB[] = [];
 
-  // קביעת אזור דגימה: רוחב 40%-60%, גובה 15%-85%
-  const startX = Math.floor(img.width * 0.40);
-  const endX = Math.ceil(img.width * 0.60);
+  for (let x = centerX - size; x < centerX + size; x++) {
+    for (let y = centerY - size; y < centerY + size; y++) {
+      if (x < 0 || x >= img.width || y < 0 || y >= img.height) continue;
 
-  const topStartY = Math.floor(img.height * 0.15);
-  const topEndY = Math.floor(img.height * 0.45);
+      const data = ctx.getImageData(x, y, 1, 1).data;
+      const rgb: RGB = [data[0], data[1], data[2]];
 
-  const bottomStartY = Math.floor(img.height * 0.45);
-  const bottomEndY = Math.floor(img.height * 0.85);
+      fallbackPixels.push(rgb);
 
-  const sampleRegion = (sx: number, ex: number, sy: number, ey: number) => {
-    for (let x = sx; x < ex; x++) {
-      for (let y = sy; y < ey; y++) {
-        const data = ctx.getImageData(x, y, 1, 1).data;
-        const rgb: RGB = [data[0], data[1], data[2]];
+      const [L] = chroma(rgb).lab();
+      const saturation = chroma(rgb).hsl()[1];
 
-        const [L] = chroma(rgb).lab();
-        const saturation = chroma(rgb).hsl()[1];
+      if (L > 98) continue;
+      if (saturation < 0.03 && L > 85) continue;
 
-        // סינון פיקסלים רקעיים (לבן או כמעט לבן)
-        if (L > 96 && saturation < 0.03) continue;
-
-        pixels.push(rgb);
-      }
+      pixels.push(rgb);
     }
-  };
+  }
 
-  // מדגמים את החלק העליון והתחתון של הבגד
-  sampleRegion(startX, endX, topStartY, topEndY);
-  sampleRegion(startX, endX, bottomStartY, bottomEndY);
-
-  if (!pixels.length) return [[0, 0, 0]];
+  if (!pixels.length) {
+    const mid = fallbackPixels[Math.floor(fallbackPixels.length / 2)];
+    return [mid];
+  }
 
   const { centroids } = kmeans(pixels, topN, {});
   return centroids.map(c => c.map(v => Math.round(v)) as RGB);
 }
-
