@@ -18,7 +18,6 @@ const PROTECTED_PATHS = [
   "/sharelookpersonal",
   "/sharelook",
   "/home",
-
 ];
 
 export function middleware(req: NextRequest) {
@@ -28,9 +27,7 @@ export function middleware(req: NextRequest) {
     pathname.startsWith(path)
   );
 
-  if (!isProtected) {
-    return NextResponse.next();
-  }
+  if (!isProtected) return NextResponse.next();
 
   const authToken = req.cookies.get("authToken")?.value;
   const userId = req.cookies.get("userId")?.value;
@@ -42,10 +39,8 @@ export function middleware(req: NextRequest) {
     url.pathname = "/welcome";
 
     if (pathname.startsWith("/look/")) {
-      url.searchParams.set(
-        "redirectLookId",
-        pathname.split("/look/")[1]
-      );
+      const lookId = pathname.split("/look/")[1];
+      if (lookId) url.searchParams.set("redirectLookId", lookId);
     }
 
     return NextResponse.redirect(url);
