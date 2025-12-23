@@ -88,9 +88,3 @@ The application will start in local development mode.
 - Combines personal wardrobe management with social fashion features
 - Strong focus on user experience and image-based functionality
 
----
-
-## 👩‍💻 Project Creator
-
-**Shira Goldstein**  
-Full-Stack Development – Educational Project
